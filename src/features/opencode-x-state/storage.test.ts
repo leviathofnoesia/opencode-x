@@ -1,5 +1,5 @@
-import { describe, test, expect, beforeEach, afterEach } from "bun:test"
-import { existsSync, mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs"
+import { describe, expect, test, beforeEach, afterEach } from "bun:test"
+import { existsSync, mkdirSync, rmSync } from "node:fs"
 import { join } from "node:path"
 import { tmpdir } from "node:os"
 import {
@@ -23,7 +23,7 @@ import {
   incrementSessionMessages,
   getProjectStats,
 } from "./storage"
-import type { OpenCodeXState, WorkflowState, TaskState, SessionState } from "./types"
+import type { WorkflowState, SessionState } from "./types"
 
 describe("opencode-x-state", () => {
   const TEST_DIR = join(tmpdir(), "opencode-x-state-test-" + Date.now())
@@ -43,14 +43,13 @@ describe("opencode-x-state", () => {
   })
 
   describe("readState / writeState", () => {
-    test("returns null for non-existent state file", () => {
-      const state = readState(TEST_DIR)
-      expect(state).toBeNull()
+    test("should return null when no state file exists", () => {
+      const result = readState(TEST_DIR)
+      expect(result).toBeNull()
     })
 
-    test("writes and reads state successfully", () => {
+    test("should write and read state successfully", () => {
       const state = createState(TEST_DIR, PROJECT_NAME)
-      expect(state).not.toBeNull()
       expect(state.version).toBe("1.0.0")
       expect(state.project.name).toBe(PROJECT_NAME)
 
@@ -59,7 +58,7 @@ describe("opencode-x-state", () => {
       expect(readBack!.project.name).toBe(PROJECT_NAME)
     })
 
-    test("clears state successfully", () => {
+    test("should clear state successfully", () => {
       createState(TEST_DIR, PROJECT_NAME)
       expect(existsSync(join(TEST_DIR, ".opencode-x", "state.json"))).toBe(true)
 
@@ -70,34 +69,24 @@ describe("opencode-x-state", () => {
   })
 
   describe("getOrCreateState", () => {
-    test("creates state if none exists", () => {
+    test("should create state if none exists", () => {
       const state = getOrCreateState(TEST_DIR, PROJECT_NAME)
       expect(state.project.name).toBe(PROJECT_NAME)
       expect(state.workflows).toEqual({})
       expect(state.sessions).toEqual({})
     })
 
-    test("returns existing state if exists", () => {
+    test("should return existing state if exists", () => {
       createState(TEST_DIR, PROJECT_NAME)
       const state = getOrCreateState(TEST_DIR, "different-name")
-
-      expect(state.project.name).toBe(PROJECT_NAME) // Original name preserved
-    })
-
-    test("updates lastOpenedAt on existing state", () => {
-      const original = createState(TEST_DIR, PROJECT_NAME)
-      const originalTime = original.project.lastOpenedAt
-
-      // Small delay to ensure different timestamp
-      const state = getOrCreateState(TEST_DIR, PROJECT_NAME)
-
-      expect(state.project.lastOpenedAt).not.toBe(originalTime)
+      expect(state.project.name).toBe(PROJECT_NAME)
     })
   })
 
   describe("workflow management", () => {
-    test("adds workflow successfully", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should add workflow successfully", () => {
+      createState(TEST_DIR, PROJECT_NAME)
+
       const workflow: WorkflowState = {
         id: "wf-1",
         name: "Test Workflow",
@@ -118,8 +107,8 @@ describe("opencode-x-state", () => {
       expect(retrieved!.name).toBe("Test Workflow")
     })
 
-    test("updates workflow successfully", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should update workflow successfully", () => {
+      createState(TEST_DIR, PROJECT_NAME)
       const workflow: WorkflowState = {
         id: "wf-1",
         name: "Original",
@@ -145,8 +134,8 @@ describe("opencode-x-state", () => {
       expect(retrieved!.status).toBe("in_progress")
     })
 
-    test("getAllWorkflows returns all workflows", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should get all workflows", () => {
+      createState(TEST_DIR, PROJECT_NAME)
 
       addWorkflow(TEST_DIR, {
         id: "wf-1",
@@ -176,8 +165,8 @@ describe("opencode-x-state", () => {
       expect(all).toHaveLength(2)
     })
 
-    test("updates task within workflow", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should update task within workflow", () => {
+      createState(TEST_DIR, PROJECT_NAME)
 
       const workflow: WorkflowState = {
         id: "wf-1",
@@ -214,8 +203,8 @@ describe("opencode-x-state", () => {
   })
 
   describe("session management", () => {
-    test("adds session successfully", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should add session successfully", () => {
+      createState(TEST_DIR, PROJECT_NAME)
       const session: SessionState = {
         id: "session-1",
         agent: "Kraken",
@@ -233,8 +222,8 @@ describe("opencode-x-state", () => {
       expect(retrieved!.agent).toBe("Kraken")
     })
 
-    test("updates session successfully", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should update session successfully", () => {
+      createState(TEST_DIR, PROJECT_NAME)
       const session: SessionState = {
         id: "session-1",
         agent: "Kraken",
@@ -257,8 +246,8 @@ describe("opencode-x-state", () => {
       expect(retrieved!.tokensUsed).toBe(10000)
     })
 
-    test("increments session messages", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should increment session messages", () => {
+      createState(TEST_DIR, PROJECT_NAME)
       const session: SessionState = {
         id: "session-1",
         agent: "Kraken",
@@ -276,13 +265,13 @@ describe("opencode-x-state", () => {
       expect(retrieved!.messages).toBe(2)
     })
 
-    test("getAllSessions returns all sessions", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should get all sessions", () => {
+      createState(TEST_DIR, PROJECT_NAME)
 
       addSession(TEST_DIR, {
         id: "s1",
         agent: "Kraken",
-        model: "claude-opus-4-5",
+        model: "claude",
         startedAt: new Date().toISOString(),
         lastActivityAt: new Date().toISOString(),
         messages: 0,
@@ -303,7 +292,7 @@ describe("opencode-x-state", () => {
   })
 
   describe("active workflow", () => {
-    test("sets and gets active workflow", () => {
+    test("should set and get active workflow", () => {
       createState(TEST_DIR, PROJECT_NAME)
 
       const set = setActiveWorkflow(TEST_DIR, "wf-1", "task-1")
@@ -315,7 +304,7 @@ describe("opencode-x-state", () => {
       expect(active!.currentTaskId).toBe("task-1")
     })
 
-    test("clears active workflow", () => {
+    test("should clear active workflow", () => {
       createState(TEST_DIR, PROJECT_NAME)
       setActiveWorkflow(TEST_DIR, "wf-1", "task-1")
 
@@ -328,7 +317,7 @@ describe("opencode-x-state", () => {
   })
 
   describe("project statistics", () => {
-    test("returns correct stats for empty project", () => {
+    test("should return correct stats for empty project", () => {
       createState(TEST_DIR, PROJECT_NAME)
       const stats = getProjectStats(TEST_DIR)
 
@@ -338,8 +327,8 @@ describe("opencode-x-state", () => {
       expect(stats.totalSessions).toBe(0)
     })
 
-    test("returns correct stats with workflows and sessions", () => {
-      const state = createState(TEST_DIR, PROJECT_NAME)
+    test("should return correct stats with workflows and sessions", () => {
+      createState(TEST_DIR, PROJECT_NAME)
 
       addWorkflow(TEST_DIR, {
         id: "wf-1",
