@@ -1,201 +1,219 @@
 import type { AgentConfig } from "@opencode-ai/sdk"
-import type { BuiltinAgentName, AgentOverrideConfig, AgentOverrides, AgentFactory, AgentPromptMetadata } from "./types"
-import { createSisyphusAgent } from "./sisyphus"
-import { createOracleAgent, ORACLE_PROMPT_METADATA } from "./oracle"
-import { createLibrarianAgent, LIBRARIAN_PROMPT_METADATA } from "./librarian"
-import { createExploreAgent, EXPLORE_PROMPT_METADATA } from "./explore"
-import { createFrontendUiUxEngineerAgent, FRONTEND_PROMPT_METADATA } from "./frontend-ui-ux-engineer"
-import { createDocumentWriterAgent, DOCUMENT_WRITER_PROMPT_METADATA } from "./document-writer"
-import { createMultimodalLookerAgent, MULTIMODAL_LOOKER_PROMPT_METADATA } from "./multimodal-looker"
-import { createMetisAgent } from "./metis"
-import { createOrchestratorSisyphusAgent, orchestratorSisyphusAgent } from "./orchestrator-sisyphus"
-import { createMomusAgent } from "./momus"
-import type { AvailableAgent } from "./sisyphus-prompt-builder"
-import { deepMerge } from "../shared"
-import { DEFAULT_CATEGORIES } from "../tools/sisyphus-task/constants"
-import { resolveMultipleSkills } from "../features/opencode-skill-loader/skill-content"
-import {
-  createKrakenConfig,
-  createMaelstromConfig,
-  createAbyssalConfig,
-  createNautilusConfig,
-  createCoralConfig,
-  createSirenConfig,
-  createLeviathanConfig,
-  createPoseidonConfig,
-  createScyllaConfig,
-  MAELSTROM_PROMPT_METADATA,
-  NAUTILUS_PROMPT_METADATA,
-  ABYSSAL_PROMPT_METADATA,
-  CORAL_PROMPT_METADATA,
-  SIREN_PROMPT_METADATA
-} from "./sea-themed"
+import type { AgentPromptMetadata, AgentOverrides } from "./types"
+import { createKrakenConfig } from "./sea-themed/kraken"
+import { createMaelstromConfig } from "./sea-themed/maelstrom"
+import { createNautilusConfig } from "./sea-themed/nautilus"
+import { createScyllaConfig } from "./sea-themed/scylla"
+import { createPoseidonConfig } from "./sea-themed/poseidon"
+import { createAbyssalConfig } from "./sea-themed/abyssal"
+import { createCoralConfig } from "./sea-themed/coral"
+import { createSirenConfig } from "./sea-themed/siren"
+import { createLeviathanConfig } from "./sea-themed/leviathan"
+import { createPearlConfig } from "./sea-themed/pearl"
 
-type AgentSource = AgentFactory | AgentConfig
+export interface AvailableAgent {
+  name: string
+  description: string
+  metadata: AgentPromptMetadata
+}
 
-const agentSources: Record<BuiltinAgentName, AgentSource> = {
+const agentFactories: Record<string, (model?: string) => AgentConfig> = {
   Kraken: createKrakenConfig,
   Maelstrom: createMaelstromConfig,
-  Abyssal: createAbyssalConfig,
   Nautilus: createNautilusConfig,
+  Scylla: createScyllaConfig,
+  "Poseidon (Plan Consultant)": createPoseidonConfig,
+  Abyssal: createAbyssalConfig,
   Coral: createCoralConfig,
   Siren: createSirenConfig,
   Leviathan: createLeviathanConfig,
-  "Poseidon (Plan Consultant)": createPoseidonConfig,
-  "Scylla (Plan Reviewer)": createScyllaConfig,
-  "orchestrator-kraken": createKrakenConfig,
+  Pearl: createPearlConfig,
 }
 
-const agentMetadata: Partial<Record<BuiltinAgentName, AgentPromptMetadata>> = {
-  Maelstrom: MAELSTROM_PROMPT_METADATA,
-  Abyssal: ABYSSAL_PROMPT_METADATA,
-  Nautilus: NAUTILUS_PROMPT_METADATA,
-  Coral: CORAL_PROMPT_METADATA,
-  Siren: SIREN_PROMPT_METADATA,
-}
-
-function isFactory(source: AgentSource): source is AgentFactory {
-  return typeof source === "function"
-}
-
-export function buildAgent(source: AgentSource, model?: string): AgentConfig {
-  const base = isFactory(source) ? source(model) : source
-
-  const agentWithCategory = base as AgentConfig & { category?: string; skills?: string[] }
-  if (agentWithCategory.category) {
-    const categoryConfig = DEFAULT_CATEGORIES[agentWithCategory.category]
-    if (categoryConfig) {
-      if (!base.model) {
-        base.model = categoryConfig.model
-      }
-      if (base.temperature === undefined && categoryConfig.temperature !== undefined) {
-        base.temperature = categoryConfig.temperature
-      }
-    }
-  }
-
-  if (agentWithCategory.skills?.length) {
-    const { resolved } = resolveMultipleSkills(agentWithCategory.skills)
-    if (resolved.size > 0) {
-      const skillContent = Array.from(resolved.values()).join("\n\n")
-      base.prompt = skillContent + (base.prompt ? "\n\n" + base.prompt : "")
-    }
-  }
-
-  return base
-}
-
-/**
- * Creates OmO-specific environment context (time, timezone, locale).
- * Note: Working directory, platform, and date are already provided by OpenCode's system.ts,
- * so we only include fields that OpenCode doesn't provide to avoid duplication.
- * See: https://github.com/code-yeongyu/oh-my-opencode/issues/379
- */
-export function createEnvContext(): string {
-  const now = new Date()
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const locale = Intl.DateTimeFormat().resolvedOptions().locale
-
-  const timeStr = now.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  })
-
-  return `
-<omo-env>
-  Current time: ${timeStr}
-  Timezone: ${timezone}
-  Locale: ${locale}
-</omo-env>`
-}
-
-function mergeAgentConfig(
-  base: AgentConfig,
-  override: AgentOverrideConfig
-): AgentConfig {
-  const { prompt_append, ...rest } = override
-  const merged = deepMerge(base, rest as Partial<AgentConfig>)
-
-  if (prompt_append && merged.prompt) {
-    merged.prompt = merged.prompt + "\n" + prompt_append
-  }
-
-  return merged
+const agentMetadata: Record<string, AgentPromptMetadata> = {
+  Maelstrom: {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    promptAlias: "Maelstrom",
+    triggers: [
+      { domain: "Architecture decisions", trigger: "Multi-system tradeoffs, unfamiliar patterns" },
+      { domain: "Self-review", trigger: "After completing significant implementation" },
+      { domain: "Hard debugging", trigger: "After 2+ failed fix attempts" },
+    ],
+    useWhen: [
+      "Complex architecture design",
+      "After completing significant work",
+      "2+ failed fix attempts",
+      "Unfamiliar code patterns",
+      "Security/performance concerns",
+      "Multi-system tradeoffs",
+    ],
+    avoidWhen: [
+      "Simple file operations",
+      "First attempt at any fix",
+      "Questions answerable from code you've read",
+      "Trivial decisions",
+    ],
+  },
+  Nautilus: {
+    category: "exploration",
+    cost: "FREE",
+    promptAlias: "Nautilus",
+    keyTrigger: "2+ modules involved → fire Nautilus background",
+    triggers: [
+      { domain: "Nautilus", trigger: "Find existing codebase structure, patterns and styles" },
+    ],
+    useWhen: [
+      "Multiple search angles needed",
+      "Unfamiliar module structure",
+      "Cross-layer pattern discovery",
+    ],
+    avoidWhen: [
+      "You know exactly what to search",
+      "Single keyword/pattern suffices",
+      "Known file location",
+    ],
+  },
+  Poseidon: {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    promptAlias: "Poseidon",
+    triggers: [
+      { domain: "Pre-planning analysis", trigger: "Complex task requiring scope clarification" },
+    ],
+    useWhen: [
+      "Before planning non-trivial tasks",
+      "When user request is ambiguous",
+      "To prevent AI over-engineering",
+    ],
+    avoidWhen: ["Simple, well-defined tasks"],
+  },
+  Scylla: {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    promptAlias: "Scylla",
+    triggers: [
+      { domain: "Plan review", trigger: "Evaluate work plans for clarity and completeness" },
+      { domain: "Quality assurance", trigger: "Catch gaps before implementation" },
+    ],
+    useWhen: [
+      "After planner creates a work plan",
+      "Before executing a complex todo list",
+      "To validate plan quality",
+    ],
+    avoidWhen: [
+      "Simple, single-task requests",
+      "When user explicitly wants to skip review",
+    ],
+  },
+  Abyssal: {
+    category: "exploration",
+    cost: "CHEAP",
+    promptAlias: "Abyssal",
+    keyTrigger: "External library/source mentioned → fire Abyssal background",
+    triggers: [
+      { domain: "Abyssal", trigger: "Unfamiliar packages, external library behavior" },
+    ],
+    useWhen: [
+      "How do I use a library?",
+      "Best practice for framework feature?",
+      "Why does external dependency behave this way?",
+      "Find examples of library usage",
+    ],
+  },
+  Coral: {
+    category: "specialist",
+    cost: "CHEAP",
+    promptAlias: "Coral",
+    triggers: [
+      { domain: "Frontend UI/UX", trigger: "Visual changes only" },
+    ],
+    useWhen: [
+      "Visual/UI/UX changes: Color, spacing, layout, typography, animation",
+    ],
+    avoidWhen: [
+      "Pure logic: API calls, data fetching, state management",
+    ],
+  },
+  Siren: {
+    category: "specialist",
+    cost: "CHEAP",
+    promptAlias: "Siren",
+    triggers: [
+      { domain: "Documentation", trigger: "README, API docs, guides" },
+    ],
+  },
+  Leviathan: {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    promptAlias: "Leviathan",
+    triggers: [
+      { domain: "Architecture", trigger: "System design, structural analysis" },
+    ],
+    useWhen: [
+      "Complex architectural questions",
+      "Large-scale refactoring planning",
+      "Technology selection and migration",
+      "Performance optimization at system level",
+    ],
+    avoidWhen: [
+      "Simple implementation questions",
+      "Quick fixes that don't affect architecture",
+    ],
+  },
+  Pearl: {
+    category: "utility",
+    cost: "CHEAP",
+    promptAlias: "Pearl",
+    triggers: [
+      { domain: "Multimedia Analysis", trigger: "PDFs, images, diagrams" },
+    ],
+    useWhen: [
+      "Analyzing PDF documents",
+      "Describing visual content in images",
+      "Extracting data from charts or diagrams",
+    ],
+    avoidWhen: [
+      "Plain text files",
+      "Files needing editing afterward",
+    ],
+  },
 }
 
 export function createBuiltinAgents(
-  disabledAgents: BuiltinAgentName[] = [],
-  agentOverrides: AgentOverrides = {},
-  directory?: string,
-  systemDefaultModel?: string
+  disabledAgents: string[] = [],
+  agentOverrides: AgentOverrides = {}
 ): Record<string, AgentConfig> {
   const result: Record<string, AgentConfig> = {}
-  const availableAgents: AvailableAgent[] = []
 
-  for (const [name, source] of Object.entries(agentSources)) {
-    const agentName = name as BuiltinAgentName
+  for (const [name, factory] of Object.entries(agentFactories)) {
+    if (disabledAgents.includes(name)) continue
 
-    if (agentName === "Kraken") continue
-    if (agentName === "orchestrator-kraken") continue
-    if (disabledAgents.includes(agentName)) continue
+    const override = agentOverrides[name as keyof AgentOverrides]
+    let config = factory(override?.model)
 
-    const override = agentOverrides[agentName]
-    const model = override?.model
-
-    let config = buildAgent(source, model)
-
-    if (agentName === "Abyssal" && directory && config.prompt) {
-      const envContext = createEnvContext()
-      config = { ...config, prompt: config.prompt + envContext }
-    }
-
-    if (override) {
-      config = mergeAgentConfig(config, override)
+    if (override?.prompt_append && config.prompt) {
+      config = { ...config, prompt: config.prompt + "\n\n" + override.prompt_append }
     }
 
     result[name] = config
-
-    const metadata = agentMetadata[agentName]
-    if (metadata) {
-      availableAgents.push({
-        name: agentName,
-        description: config.description ?? "",
-        metadata,
-      })
-    }
-  }
-
-  if (!disabledAgents.includes("Kraken")) {
-    const krakenOverride = agentOverrides["Kraken"]
-    const krakenModel = krakenOverride?.model ?? systemDefaultModel
-
-    let krakenConfig = createKrakenConfig(krakenModel, availableAgents)
-
-    if (directory && krakenConfig.prompt) {
-      const envContext = createEnvContext()
-      krakenConfig = { ...krakenConfig, prompt: krakenConfig.prompt + envContext }
-    }
-
-    if (krakenOverride) {
-      krakenConfig = mergeAgentConfig(krakenConfig, krakenOverride)
-    }
-
-    result["Kraken"] = krakenConfig
-  }
-
-  if (!disabledAgents.includes("orchestrator-kraken")) {
-    const orchestratorOverride = agentOverrides["orchestrator-kraken"]
-    const orchestratorModel = orchestratorOverride?.model
-    let orchestratorConfig = createKrakenConfig(orchestratorModel, availableAgents)
-
-    if (orchestratorOverride) {
-      orchestratorConfig = mergeAgentConfig(orchestratorConfig, orchestratorOverride)
-    }
-
-    result["orchestrator-kraken"] = orchestratorConfig
   }
 
   return result
+}
+
+export function getAvailableAgents(): AvailableAgent[] {
+  return Object.entries(agentMetadata).map(([name, metadata]) => ({
+    name,
+    description: agentFactories[name]().description || "",
+    metadata,
+  }))
+}
+
+export function getAgentMetadata(name: string): AgentPromptMetadata | undefined {
+  return agentMetadata[name]
+}
+
+export function isGptModel(model: string): boolean {
+  return model.startsWith("openai/") || model.startsWith("github-copilot/gpt-")
 }

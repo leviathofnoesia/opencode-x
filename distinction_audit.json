@@ -1,0 +1,17 @@
+{
+  "file_overlap_percent": 4.9,
+  "token_overlap_percent": 29.61,
+  "identical_prompts_count": 0,
+  "identical_prompt_names": [],
+  "thresholds": {
+    "file_overlap_threshold": 5.0,
+    "token_overlap_threshold": 35.0,
+    "identical_prompts_threshold": 0
+  },
+  "passes": {
+    "file_overlap": true,
+    "token_overlap": true,
+    "identical_prompts": true
+  },
+  "overall_pass": true
+}

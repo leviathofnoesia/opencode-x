@@ -1,56 +1,10 @@
-// Sea-themed agents for OpenCode-X
-
-export {
-  createMaelstromConfig,
-  maelstromAgent,
-  MAELSTROM_PROMPT_METADATA
-} from "./maelstrom"
-
-export {
-  createPoseidonConfig,
-  poseidonAgent,
-  poseidonPromptMetadata
-} from "./poseidon"
-
-export {
-  createScyllaConfig,
-  scyllaAgent,
-  scyllaPromptMetadata
-} from "./scylla"
-
-export {
-  createLeviathanConfig,
-  leviathanAgent,
-  leviathanPromptMetadata
-} from "./leviathan"
-
-export {
-  createNautilusConfig,
-  nautilusAgent,
-  NAUTILUS_PROMPT_METADATA
-} from "./nautilus"
-
-export {
-  createAbyssalConfig,
-  abyssalAgent,
-  ABYSSAL_PROMPT_METADATA
-} from "./abyssal"
-
-export {
-  createCoralConfig,
-  coralAgent,
-  CORAL_PROMPT_METADATA
-} from "./coral"
-
-export {
-  createSirenConfig,
-  sirenAgent,
-  SIREN_PROMPT_METADATA
-} from "./siren"
-
-export {
-  createKrakenConfig,
-  krakenAgent
-} from "./kraken"
-
-export type { AgentPromptMetadata } from "../types"
+export { createMaelstromConfig, MAELSTROM_PROMPT_METADATA, maelstromAgent } from "./maelstrom"
+export { createNautilusConfig, nautilusAgent } from "./nautilus"
+export { createScyllaConfig, scyllaAgent } from "./scylla"
+export { createKrakenConfig, krakenAgent } from "./kraken"
+export { createPoseidonConfig, poseidonPromptMetadata, poseidonAgent } from "./poseidon"
+export { createAbyssalConfig, abyssalAgent } from "./abyssal"
+export { createCoralConfig, coralAgent } from "./coral"
+export { createSirenConfig, sirenAgent } from "./siren"
+export { createLeviathanConfig, leviathanPromptMetadata, leviathanAgent } from "./leviathan"
+export { createPearlConfig, PEARL_PROMPT_METADATA, pearlAgent } from "./pearl"

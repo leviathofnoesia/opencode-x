@@ -1,0 +1,70 @@
+[
+  {
+    "const_name": "ANCHOR_PHASE_SYSTEM_PROMPT",
+    "hash_key": "f97d"
+  },
+  {
+    "const_name": "NAUTILUS_SYSTEM_PROMPT",
+    "hash_key": "03f3"
+  },
+  {
+    "const_name": "SCYLLA_SYSTEM_PROMPT",
+    "hash_key": "b2fc"
+  },
+  {
+    "const_name": "MAELSTROM_SYSTEM_PROMPT",
+    "hash_key": "247d"
+  },
+  {
+    "const_name": "KRAKEN_SYSTEM_PROMPT",
+    "hash_key": "4407"
+  },
+  {
+    "const_name": "TIDAL_PLAN_SYSTEM_PROMPT",
+    "hash_key": "f9a5"
+  },
+  {
+    "const_name": "POSEIDON_SYSTEM_PROMPT",
+    "hash_key": "5432"
+  },
+  {
+    "const_name": "TENTACLE_SYSTEM_PROMPT",
+    "hash_key": "3cbb"
+  },
+  {
+    "const_name": "SONAR_ECHO_SYSTEM_PROMPT",
+    "hash_key": "32ad"
+  },
+  {
+    "const_name": "CAPTAINS_LOG_SYSTEM_PROMPT",
+    "hash_key": "e01b"
+  },
+  {
+    "const_name": "CURRENTS_ALERT_SYSTEM_PROMPT",
+    "hash_key": "33dd"
+  },
+  {
+    "const_name": "WHIRLPOOL_SYSTEM_PROMPT",
+    "hash_key": "319d"
+  },
+  {
+    "const_name": "MAELSTROM_SYSTEM_PROMPT",
+    "hash_key": "0cc1"
+  },
+  {
+    "const_name": "POSEIDON_SYSTEM_PROMPT",
+    "hash_key": "071c"
+  },
+  {
+    "const_name": "SCYLLA_SYSTEM_PROMPT",
+    "hash_key": "594a"
+  },
+  {
+    "const_name": "LEVIATHAN_SYSTEM_PROMPT",
+    "hash_key": "2151"
+  },
+  {
+    "const_name": "KRAKEN_SYSTEM_PROMPT",
+    "hash_key": "a899"
+  }
+]
