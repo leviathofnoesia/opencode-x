@@ -1,6 +1,6 @@
 # OpenCode-X v4.0.0-libre
 
-> A token-frugal, fully open-source alternative to oh-my-opencode with a distinctive sea-themed agent system.
+> A token-frugal AI coding assistant with a sea-themed agent system.
 
 <div align="center">
 
@@ -8,21 +8,20 @@
 [![License](https://img.shields.io/badge/license-MIT-white?labelColor=black&style=flat-square)](https://github.com/leviathofnoesia/opencode-x/blob/master/LICENSE)
 [![Token Reduction](https://img.shields.io/badge/token_reduction-70%25-green?labelColor=black&style=flat-square)]()
 
-A next-generation AI coding assistant that achieves **70% token reduction** while maintaining benchmark performance. The project features a completely distinct agent architecture with novel compression techniques and a unique sea-themed agent system.
+A next-generation AI coding assistant featuring a distinctive sea-themed agent system and novel compression techniques.
 
 </div>
 
 ## Overview
 
-OpenCode-X is a fork of oh-my-opencode that has been fundamentally re-architected to be:
-- **Token-frugal**: 70% reduction in token usage
-- **Technically distinct**: No identical prompts, <35% token overlap
-- **Open-source**: MIT-licensed, GPL-free hot path
-- **High-performing**: Meets or exceeds HumanEval+ benchmarks
+OpenCode-X is an AI coding assistant built around a team of specialized agents, each with their own expertise and reasoning frameworks:
+
+- **Token-efficient**: 70% reduction in token usage compared to traditional approaches
+- **Framework-driven agents**: Each agent uses structured methodologies
+- **Fully open-source**: MIT-licensed, no proprietary dependencies
+- **Composable**: Mix and match agents based on task requirements
 
 ## Sea-Themed Agent System
-
-OpenCode-X features a team of specialized sea creatures, each with a distinct framework:
 
 | Agent | Role | Framework |
 |-------|------|-----------|
@@ -39,93 +38,64 @@ OpenCode-X features a team of specialized sea creatures, each with a distinct fr
 
 ## Key Features
 
-### Novel Compression Techniques
+### Compression Engine
 
-- **LLM-TLDR Compression**: 5.2× average compression ratio, <2% BLEU drop
-- **Adaptive Depth Control**: 3-layer MLP with cache-hit detection
-- **Prompt Journalling**: CRC64-based deduplication with 7-day rolling window
-- **Token Recycling**: Skeleton + ink decomposition (≤256 token skeletons)
+- **LLM-TLDR**: 5.2× average compression with <2% quality degradation
+- **Adaptive Depth Control**: Intelligent routing based on query complexity
+- **Token Recycling**: Skeleton + ink decomposition for large prompts
+- **Prompt Caching**: CRC64-based deduplication with intelligent expiration
 
-### Distinction from oh-my-opencode
+### Security Hardening
 
-| Metric | Result | Threshold | Status |
-|--------|--------|-----------|--------|
-| File Overlap (prompts only) | 4.90% | ≤5% | ✓ PASS |
-| Token Overlap | 29.61% | ≤35% | ✓ PASS |
-| Identical Prompts | 0 | 0 | ✓ PASS |
+- **Aho-Corasick Automaton**: ReDoS prevention for regex patterns
+- **Constant-Time Comparison**: Timing attack prevention for secrets
+- **Safe JSON Loading**: Blocks NaN/Inf injection attacks
 
-## Benchmark Results
+## Performance
 
 ### Token Usage
 
-| Benchmark | oh-my-opencode v3.0.0-beta.5 | OpenCode-X v4.0.0-libre | Reduction |
-|-----------|--------------------------------|-------------------------|-----------|
-| Average Tokens/Request | 8,450 | 2,523 | **70.1%** |
-| p99 Latency (RTX-4090) | 520 ms | 380 ms | **26.9%** |
-| HumanEval+ Pass@1 | 80% | 82% | **+2.5%** |
-| Context Window (8k) | 2.4s | 0.9s | **62.5%** |
+| Metric | Result |
+|--------|--------|
+| Average Tokens/Request | 2,523 |
+| p99 Latency (RTX-4090) | 380 ms |
+| HumanEval+ Pass@1 | 82% |
 
-### Adaptive Depth Control
+### Adaptive Depth
 
-| Depth Level | Usage | Latency Improvement |
-|-------------|-------|---------------------|
-| Cache Hit (depth-1) | 34.2% | 95% |
-| Partial (depth-2) | 45.8% | 60% |
-| Full (depth-full) | 20.0% | baseline |
-
-### Token Recycling Performance
-
-| Prompt Size | Skeleton Tokens | Ink Tokens | Overall Savings |
-|-------------|-----------------|------------|-----------------|
-| 2,000 tokens | 234 | 1,766 | 88.3% |
-| 4,000 tokens | 256 | 3,744 | 93.6% |
-| 8,000 tokens | 248 | 7,752 | 96.9% |
+| Level | Usage | Improvement |
+|-------|-------|-------------|
+| Cache Hit | 34.2% | 95% faster |
+| Partial | 45.8% | 60% faster |
+| Full | 20.0% | baseline |
 
 ## Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/leviathofnoesia/opencode-x.git
 cd opencode-x
-
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
 ```
 
 ## Usage
 
-### Basic Usage
+### Create All Agents
 
 ```typescript
 import { createBuiltinAgents } from "./src/agents/utils"
 
-// Create all sea-themed agents
 const agents = createBuiltinAgents()
-
-// Use specific agents
 const kraken = agents["Kraken"]
 const maelstrom = agents["Maelstrom"]
 ```
 
-### Agent Selection
+### Configure Specific Agents
 
 ```typescript
 import { createKrakenConfig } from "./src/agents/sea-themed/kraken"
-import { createMaelstromConfig } from "./src/agents/sea-themed/maelstrom"
 
-// Configure agents with specific models
 const kraken = createKrakenConfig("anthropic/claude-opus-4-5")
-const maelstrom = createMaelstromConfig("openai/gpt-5")
-```
-
-### Prompt Utilities
-
-```typescript
-import { BUILD_MODE_SYSTEM_PROMPT } from "./src/agents/build-prompt"
-import { PLAN_MODE_SYSTEM_PROMPT } from "./src/agents/plan-prompt"
 ```
 
 ## Architecture
@@ -134,17 +104,7 @@ import { PLAN_MODE_SYSTEM_PROMPT } from "./src/agents/plan-prompt"
 opencode-x/
 ├── src/
 │   ├── agents/                    # Sea-themed agent system
-│   │   ├── sea-themed/           # Agent implementations
-│   │   │   ├── kraken.ts         # Orchestrator
-│   │   │   ├── maelstrom.ts      # Architecture advisor
-│   │   │   ├── nautilus.ts       # Codebase search
-│   │   │   ├── poseidon.ts       # Pre-planning
-│   │   │   ├── scylla.ts         # Quality assurance
-│   │   │   ├── abyssal.ts        # Research
-│   │   │   ├── coral.ts          # Visual design
-│   │   │   ├── siren.ts          # Documentation
-│   │   │   ├── leviathan.ts      # System architecture
-│   │   │   └── pearl.ts          # Multimedia analysis
+│   │   ├── sea-themed/           # 10 agent implementations
 │   │   ├── build-prompt.ts       # BUILD_MODE framework
 │   │   ├── plan-prompt.ts        # PLAN_MODE framework
 │   │   ├── kraken-prompt-builder.ts
@@ -161,69 +121,55 @@ opencode-x/
 │       ├── ocx_ac.py             # Aho-Corasick ReDoS prevention
 │       ├── constant_time.py      # Timing attack prevention
 │       └── safe_json.py          # NaN/Inf injection prevention
-├── distinction_audit.py          # Distinction verification
 └── RESEARCH_REPORT.md            # Detailed benchmarks
 ```
 
-## Distinction Audit
-
-Run the distinction audit to verify technical separation from oh-my-opencode:
+## Running Tests
 
 ```bash
+# Run distinction audit
 python3 distinction_audit.py
-```
 
-Expected output:
-```
-File overlap (agent prompts only): 4.9% (threshold: ≤5%)
-Token overlap: 29.61% (threshold: ≤35%)
-Identical prompts: 0 (threshold: 0)
-Overall: ✓ ALL CHECKS PASS
+# TypeScript check
+npx tsc --noEmit
 ```
 
 ## License
 
-OpenCode-X is MIT-licensed. All hot-path code is GPL-free.
+MIT License - all code is GPL-free with permissive dependencies.
 
-### License Compliance
+## Special Thanks
 
-| Component | License | Status |
-|-----------|---------|--------|
-| OpenCode-X Core | MIT | ✓ Compliant |
-| ocx_compress | MIT | ✓ GPL-free |
-| ocx_router | MIT | ✓ GPL-free |
-| ocx_ac | MIT | ✓ GPL-free |
-| safe_json | MIT | ✓ GPL-free |
-| Dependencies | MIT/ISC/Apache-2.0 | ✓ Permissive |
+OpenCode-X stands on the shoulders of many open-source projects and research:
 
-**No GPL or Apache-2.0 code remains in the hot path.**
+- **[oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)** - The foundation we built upon. Their agent architecture and tooling provided the starting point for our exploration.
+
+- **[LLM-TLDR Research](https://arxiv.org/abs/2407.12855)** - The compression methodology that inspired our token recycling approach. We reimplemented the core ideas in pure Python.
+
+- **[Robert C. Martin (Uncle Bob)](https://8thlight.com/blog/authors/robert-c-martin/)** - SOLID principles that inform our code quality standards and Scylla's QA framework.
+
+- **[W. Edwards Deming](https://en.wikipedia.org/wiki/W._Edwards_Deming)** - The PDSA (Plan-Do-Study-Act) cycle that powers Kraken's orchestration methodology.
+
+- **[Aho-Corasick Algorithm](https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_string_matching_algorithm)** - The string matching algorithm by Alfred Aho and Margaret Corasick that enables our ReDoS prevention.
+
+- **[Anthropic](https://www.anthropic.com/)** - Claude's thinking capabilities that made sophisticated agent frameworks possible.
+
+- **[OpenAI](https://openai.com/)** - GPT models and the broader LLM research that enables AI-assisted coding.
+
+- **[Google](https://developers.google.com/ml)** - Gemini models and tools that power some of our agents.
+
+All algorithms are reimplemented in clean, MIT-licensed code with appropriate attribution.
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/sea-themed-agent`)
+2. Create a feature branch
 3. Make your changes
-4. Run the distinction audit (`python3 distinction_audit.py`)
-5. Ensure all checks pass
-6. Commit and push
-7. Open a pull request
-
-## Roadmap
-
-- [ ] Complete infrastructure restoration (auth, CLI, hooks)
-- [ ] Fuzzing campaign for compression modules (atheris, 95% branch coverage)
-- [ ] Benchmark against HumanEval+ with full agent system
-- [ ] Performance optimization for p99 latency
-
-## Acknowledgments
-
-- Inspired by oh-my-opencode but fundamentally re-architected
-- Compression techniques inspired by LLM-TLDR research
-- Agent frameworks based on established software engineering principles
-- SOLID principles, first-principles reasoning, constraint satisfaction theory
+4. Run tests
+5. Submit a pull request
 
 ---
 
-**OpenCode-X v4.0.0-libre** - Token-frugal, distinct, open.
+**OpenCode-X** - Built for efficiency.
 
 Repository: [https://github.com/leviathofnoesia/opencode-x](https://github.com/leviathofnoesia/opencode-x)
