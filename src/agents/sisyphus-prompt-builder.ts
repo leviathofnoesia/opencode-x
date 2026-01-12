@@ -146,29 +146,29 @@ export function buildToolSelectionTable(
 }
 
 export function buildExploreSection(agents: AvailableAgent[]): string {
-  const exploreAgent = agents.find((a) => a.name === "explore")
-  if (!exploreAgent) return ""
+  const nautilusAgent = agents.find((a) => a.name === "Nautilus")
+  if (!nautilusAgent) return ""
 
-  const useWhen = exploreAgent.metadata.useWhen || []
-  const avoidWhen = exploreAgent.metadata.avoidWhen || []
+  const useWhen = nautilusAgent.metadata.useWhen || []
+  const avoidWhen = nautilusAgent.metadata.avoidWhen || []
 
-  return `### Explore Agent = Contextual Grep
+  return `### Nautilus Agent = Contextual Grep
 
 Use it as a **peer tool**, not a fallback. Fire liberally.
 
-| Use Direct Tools | Use Explore Agent |
+| Use Direct Tools | Use Nautilus Agent |
 |------------------|-------------------|
 ${avoidWhen.map((w) => `| ${w} |  |`).join("\n")}
 ${useWhen.map((w) => `|  | ${w} |`).join("\n")}`
 }
 
 export function buildLibrarianSection(agents: AvailableAgent[]): string {
-  const librarianAgent = agents.find((a) => a.name === "librarian")
-  if (!librarianAgent) return ""
+  const abyssalAgent = agents.find((a) => a.name === "Abyssal")
+  if (!abyssalAgent) return ""
 
-  const useWhen = librarianAgent.metadata.useWhen || []
+  const useWhen = abyssalAgent.metadata.useWhen || []
 
-  return `### Librarian Agent = Reference Grep
+  return `### Abyssal Agent = Reference Grep
 
 Search **external references** (docs, OSS, web). Fire proactively when unfamiliar libraries are involved.
 
@@ -181,7 +181,7 @@ Search **external references** (docs, OSS, web). Fire proactively when unfamilia
 | | Library best practices & quirks |
 | | OSS implementation examples |
 
-**Trigger phrases** (fire librarian immediately):
+**Trigger phrases** (fire abyssal immediately):
 ${useWhen.map((w) => `- "${w}"`).join("\n")}`
 }
 
@@ -203,8 +203,8 @@ export function buildDelegationTable(agents: AvailableAgent[]): string {
 }
 
 export function buildFrontendSection(agents: AvailableAgent[]): string {
-  const frontendAgent = agents.find((a) => a.name === "frontend-ui-ux-engineer")
-  if (!frontendAgent) return ""
+  const coralAgent = agents.find((a) => a.name === "Coral")
+  if (!coralAgent) return ""
 
   return `### Frontend Files: Decision Gate (NOT a blind block)
 
@@ -214,9 +214,9 @@ Frontend files (.tsx, .jsx, .vue, .svelte, .css, etc.) require **classification 
 
 | Change Type | Examples | Action |
 |-------------|----------|--------|
-| **Visual/UI/UX** | Color, spacing, layout, typography, animation, responsive breakpoints, hover states, shadows, borders, icons, images | **DELEGATE** to \`frontend-ui-ux-engineer\` |
+| **Visual/UI/UX** | Color, spacing, layout, typography, animation, responsive breakpoints, hover states, shadows, borders, icons, images | **DELEGATE** to \`Coral\` |
 | **Pure Logic** | API calls, data fetching, state management, event handlers (non-visual), type definitions, utility functions, business logic | **CAN handle directly** |
-| **Mixed** | Component changes both visual AND logic | **Split**: handle logic yourself, delegate visual to \`frontend-ui-ux-engineer\` |
+| **Mixed** | Component changes both visual AND logic | **Split**: handle logic yourself, delegate visual to \`Coral\` |
 
 #### Step 2: Ask Yourself
 
@@ -230,37 +230,37 @@ Before touching any frontend file, think:
 style, className, tailwind, color, background, border, shadow, margin, padding, width, height, flex, grid, animation, transition, hover, responsive, font-size, icon, svg`
 }
 
-export function buildOracleSection(agents: AvailableAgent[]): string {
-  const oracleAgent = agents.find((a) => a.name === "oracle")
-  if (!oracleAgent) return ""
+export function buildMaelstromSection(agents: AvailableAgent[]): string {
+  const maelstromAgent = agents.find((a) => a.name === "Maelstrom")
+  if (!maelstromAgent) return ""
 
-  const useWhen = oracleAgent.metadata.useWhen || []
-  const avoidWhen = oracleAgent.metadata.avoidWhen || []
+  const useWhen = maelstromAgent.metadata.useWhen || []
+  const avoidWhen = maelstromAgent.metadata.avoidWhen || []
 
-  return `<Oracle_Usage>
-## Oracle — Read-Only High-IQ Consultant
+  return `<Maelstrom_Usage>
+## Maelstrom — Read-Only High-IQ Consultant
 
-Oracle is a read-only, expensive, high-quality reasoning model for debugging and architecture. Consultation only.
+Maelstrom is a read-only, expensive, high-quality reasoning model for debugging and architecture. Consultation only.
 
 ### WHEN to Consult:
 
 | Trigger | Action |
 |---------|--------|
-${useWhen.map((w) => `| ${w} | Oracle FIRST, then implement |`).join("\n")}
+${useWhen.map((w) => `| ${w} | Maelstrom FIRST, then implement |`).join("\n")}
 
 ### WHEN NOT to Consult:
 
 ${avoidWhen.map((w) => `- ${w}`).join("\n")}
 
 ### Usage Pattern:
-Briefly announce "Consulting Oracle for [reason]" before invocation.
+Briefly announce "Consulting Maelstrom for [reason]" before invocation.
 
 **Exception**: This is the ONLY case where you announce before acting. For all other work, start immediately without status updates.
-</Oracle_Usage>`
+</Maelstrom_Usage>`
 }
 
 export function buildHardBlocksSection(agents: AvailableAgent[]): string {
-  const frontendAgent = agents.find((a) => a.name === "frontend-ui-ux-engineer")
+  const coralAgent = agents.find((a) => a.name === "Coral")
 
   const blocks = [
     "| Type error suppression (`as any`, `@ts-ignore`) | Never |",
@@ -269,9 +269,9 @@ export function buildHardBlocksSection(agents: AvailableAgent[]): string {
     "| Leave code in broken state after failures | Never |",
   ]
 
-  if (frontendAgent) {
+  if (coralAgent) {
     blocks.unshift(
-      "| Frontend VISUAL changes (styling, layout, animation) | Always delegate to `frontend-ui-ux-engineer` |"
+      "| Frontend VISUAL changes (styling, layout, animation) | Always delegate to `Coral` |"
     )
   }
 
@@ -283,7 +283,7 @@ ${blocks.join("\n")}`
 }
 
 export function buildAntiPatternsSection(agents: AvailableAgent[]): string {
-  const frontendAgent = agents.find((a) => a.name === "frontend-ui-ux-engineer")
+  const coralAgent = agents.find((a) => a.name === "Coral")
 
   const patterns = [
     "| **Type Safety** | `as any`, `@ts-ignore`, `@ts-expect-error` |",
@@ -293,7 +293,7 @@ export function buildAntiPatternsSection(agents: AvailableAgent[]): string {
     "| **Debugging** | Shotgun debugging, random changes |",
   ]
 
-  if (frontendAgent) {
+  if (coralAgent) {
     patterns.splice(
       4,
       0,
@@ -311,7 +311,7 @@ ${patterns.join("\n")}`
 export function buildUltraworkAgentSection(agents: AvailableAgent[]): string {
   if (agents.length === 0) return ""
 
-  const ultraworkAgentPriority = ["explore", "librarian", "plan", "oracle"]
+  const ultraworkAgentPriority = ["Nautilus", "Abyssal", "plan", "Maelstrom"]
   const sortedAgents = [...agents].sort((a, b) => {
     const aIdx = ultraworkAgentPriority.indexOf(a.name)
     const bIdx = ultraworkAgentPriority.indexOf(b.name)
@@ -324,7 +324,7 @@ export function buildUltraworkAgentSection(agents: AvailableAgent[]): string {
   const lines: string[] = []
   for (const agent of sortedAgents) {
     const shortDesc = agent.description.split(".")[0] || agent.description
-    const suffix = (agent.name === "explore" || agent.name === "librarian") ? " (multiple)" : ""
+    const suffix = (agent.name === "Nautilus" || agent.name === "Abyssal") ? " (multiple)" : ""
     lines.push(`- **${agent.name}${suffix}**: ${shortDesc}`)
   }
 

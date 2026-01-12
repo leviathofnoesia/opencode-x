@@ -8,7 +8,7 @@ import {
   buildLibrarianSection,
   buildDelegationTable,
   buildFrontendSection,
-  buildOracleSection,
+  buildMaelstromSection,
   buildHardBlocksSection,
   buildAntiPatternsSection,
   categorizeTools,
@@ -533,7 +533,7 @@ function buildDynamicSisyphusPrompt(
   const librarianSection = buildLibrarianSection(availableAgents)
   const frontendSection = buildFrontendSection(availableAgents)
   const delegationTable = buildDelegationTable(availableAgents)
-  const oracleSection = buildOracleSection(availableAgents)
+  const maelstromSection = buildMaelstromSection(availableAgents)
   const hardBlocks = buildHardBlocksSection(availableAgents)
   const antiPatterns = buildAntiPatternsSection(availableAgents)
 
@@ -589,7 +589,7 @@ function buildDynamicSisyphusPrompt(
     "",
     "</Behavior_Instructions>",
     "",
-    oracleSection,
+    maelstromSection,
     "",
     SISYPHUS_TASK_MANAGEMENT,
     "",

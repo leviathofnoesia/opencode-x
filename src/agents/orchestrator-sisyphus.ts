@@ -116,9 +116,9 @@ function buildDecisionMatrix(agents: AvailableAgent[], userCategories?: Record<s
   if (hasStrategic) rows.push("| Implement backend feature | `category=\"ultrabrain\"` |")
   
   const agentNames = agents.map((a) => a.name)
-  if (agentNames.includes("oracle")) rows.push("| Code review / architecture | `agent=\"oracle\"` |")
-  if (agentNames.includes("explore")) rows.push("| Find code in codebase | `agent=\"explore\"` |")
-  if (agentNames.includes("librarian")) rows.push("| Look up library docs | `agent=\"librarian\"` |")
+  if (agentNames.includes("Maelstrom")) rows.push("| Code review / architecture | `agent=\"Maelstrom\"` |")
+  if (agentNames.includes("Nautilus")) rows.push("| Find code in codebase | `agent=\"Nautilus\"` |")
+  if (agentNames.includes("Abyssal")) rows.push("| Look up library docs | `agent=\"Abyssal\"` |")
   rows.push("| Git commit | `agent=\"git-master\"` |")
   rows.push("| Debug complex issue | `agent=\"debugging-master\"` |")
 

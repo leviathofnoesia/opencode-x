@@ -17,16 +17,16 @@ const AgentPermissionSchema = z.object({
 })
 
 export const BuiltinAgentNameSchema = z.enum([
-  "Sisyphus",
-  "oracle",
-  "librarian",
-  "explore",
-  "frontend-ui-ux-engineer",
-  "document-writer",
-  "multimodal-looker",
-  "Metis (Plan Consultant)",
-  "Momus (Plan Reviewer)",
-  "orchestrator-sisyphus",
+  "Kraken",
+  "Maelstrom",
+  "Abyssal",
+  "Nautilus",
+  "Coral",
+  "Siren",
+  "Leviathan",
+  "Poseidon (Plan Consultant)",
+  "Scylla (Plan Reviewer)",
+  "orchestrator-kraken",
 ])
 
 export const BuiltinSkillNameSchema = z.enum([
@@ -38,18 +38,18 @@ export const BuiltinSkillNameSchema = z.enum([
 export const OverridableAgentNameSchema = z.enum([
   "build",
   "plan",
-  "Sisyphus",
+  "Kraken",
   "OpenCode-Builder",
   "Prometheus (Planner)",
-  "Metis (Plan Consultant)",
-  "Momus (Plan Reviewer)",
-  "oracle",
-  "librarian",
-  "explore",
-  "frontend-ui-ux-engineer",
-  "document-writer",
-  "multimodal-looker",
-  "orchestrator-sisyphus",
+  "Poseidon (Plan Consultant)",
+  "Scylla (Plan Reviewer)",
+  "Maelstrom",
+  "Abyssal",
+  "Nautilus",
+  "Coral",
+  "Siren",
+  "Leviathan",
+  "orchestrator-kraken",
 ])
 
 export const AgentNameSchema = BuiltinAgentNameSchema
@@ -118,18 +118,18 @@ export const AgentOverrideConfigSchema = z.object({
 export const AgentOverridesSchema = z.object({
   build: AgentOverrideConfigSchema.optional(),
   plan: AgentOverrideConfigSchema.optional(),
-  Sisyphus: AgentOverrideConfigSchema.optional(),
+  Kraken: AgentOverrideConfigSchema.optional(),
   "OpenCode-Builder": AgentOverrideConfigSchema.optional(),
   "Prometheus (Planner)": AgentOverrideConfigSchema.optional(),
-  "Metis (Plan Consultant)": AgentOverrideConfigSchema.optional(),
-  "Momus (Plan Reviewer)": AgentOverrideConfigSchema.optional(),
-  oracle: AgentOverrideConfigSchema.optional(),
-  librarian: AgentOverrideConfigSchema.optional(),
-  explore: AgentOverrideConfigSchema.optional(),
-  "frontend-ui-ux-engineer": AgentOverrideConfigSchema.optional(),
-  "document-writer": AgentOverrideConfigSchema.optional(),
-  "multimodal-looker": AgentOverrideConfigSchema.optional(),
-  "orchestrator-sisyphus": AgentOverrideConfigSchema.optional(),
+  "Poseidon (Plan Consultant)": AgentOverrideConfigSchema.optional(),
+  "Scylla (Plan Reviewer)": AgentOverrideConfigSchema.optional(),
+  Maelstrom: AgentOverrideConfigSchema.optional(),
+  Abyssal: AgentOverrideConfigSchema.optional(),
+  Nautilus: AgentOverrideConfigSchema.optional(),
+  Coral: AgentOverrideConfigSchema.optional(),
+  Siren: AgentOverrideConfigSchema.optional(),
+  Leviathan: AgentOverrideConfigSchema.optional(),
+  "orchestrator-kraken": AgentOverrideConfigSchema.optional(),
 })
 
 export const ClaudeCodeConfigSchema = z.object({

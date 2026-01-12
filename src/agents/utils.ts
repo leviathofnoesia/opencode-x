@@ -14,33 +14,44 @@ import type { AvailableAgent } from "./sisyphus-prompt-builder"
 import { deepMerge } from "../shared"
 import { DEFAULT_CATEGORIES } from "../tools/sisyphus-task/constants"
 import { resolveMultipleSkills } from "../features/opencode-skill-loader/skill-content"
+import {
+  createKrakenConfig,
+  createMaelstromConfig,
+  createAbyssalConfig,
+  createNautilusConfig,
+  createCoralConfig,
+  createSirenConfig,
+  createLeviathanConfig,
+  createPoseidonConfig,
+  createScyllaConfig,
+  MAELSTROM_PROMPT_METADATA,
+  NAUTILUS_PROMPT_METADATA,
+  ABYSSAL_PROMPT_METADATA,
+  CORAL_PROMPT_METADATA,
+  SIREN_PROMPT_METADATA
+} from "./sea-themed"
 
 type AgentSource = AgentFactory | AgentConfig
 
 const agentSources: Record<BuiltinAgentName, AgentSource> = {
-  Sisyphus: createSisyphusAgent,
-  oracle: createOracleAgent,
-  librarian: createLibrarianAgent,
-  explore: createExploreAgent,
-  "frontend-ui-ux-engineer": createFrontendUiUxEngineerAgent,
-  "document-writer": createDocumentWriterAgent,
-  "multimodal-looker": createMultimodalLookerAgent,
-  "Metis (Plan Consultant)": createMetisAgent,
-  "Momus (Plan Reviewer)": createMomusAgent,
-  "orchestrator-sisyphus": orchestratorSisyphusAgent,
+  Kraken: createKrakenConfig,
+  Maelstrom: createMaelstromConfig,
+  Abyssal: createAbyssalConfig,
+  Nautilus: createNautilusConfig,
+  Coral: createCoralConfig,
+  Siren: createSirenConfig,
+  Leviathan: createLeviathanConfig,
+  "Poseidon (Plan Consultant)": createPoseidonConfig,
+  "Scylla (Plan Reviewer)": createScyllaConfig,
+  "orchestrator-kraken": createKrakenConfig,
 }
 
-/**
- * Metadata for each agent, used to build Sisyphus's dynamic prompt sections
- * (Delegation Table, Tool Selection, Key Triggers, etc.)
- */
 const agentMetadata: Partial<Record<BuiltinAgentName, AgentPromptMetadata>> = {
-  oracle: ORACLE_PROMPT_METADATA,
-  librarian: LIBRARIAN_PROMPT_METADATA,
-  explore: EXPLORE_PROMPT_METADATA,
-  "frontend-ui-ux-engineer": FRONTEND_PROMPT_METADATA,
-  "document-writer": DOCUMENT_WRITER_PROMPT_METADATA,
-  "multimodal-looker": MULTIMODAL_LOOKER_PROMPT_METADATA,
+  Maelstrom: MAELSTROM_PROMPT_METADATA,
+  Abyssal: ABYSSAL_PROMPT_METADATA,
+  Nautilus: NAUTILUS_PROMPT_METADATA,
+  Coral: CORAL_PROMPT_METADATA,
+  Siren: SIREN_PROMPT_METADATA,
 }
 
 function isFactory(source: AgentSource): source is AgentFactory {
@@ -126,8 +137,8 @@ export function createBuiltinAgents(
   for (const [name, source] of Object.entries(agentSources)) {
     const agentName = name as BuiltinAgentName
 
-    if (agentName === "Sisyphus") continue
-    if (agentName === "orchestrator-sisyphus") continue
+    if (agentName === "Kraken") continue
+    if (agentName === "orchestrator-kraken") continue
     if (disabledAgents.includes(agentName)) continue
 
     const override = agentOverrides[agentName]
@@ -135,7 +146,7 @@ export function createBuiltinAgents(
 
     let config = buildAgent(source, model)
 
-    if (agentName === "librarian" && directory && config.prompt) {
+    if (agentName === "Abyssal" && directory && config.prompt) {
       const envContext = createEnvContext()
       config = { ...config, prompt: config.prompt + envContext }
     }
@@ -156,37 +167,34 @@ export function createBuiltinAgents(
     }
   }
 
-  if (!disabledAgents.includes("Sisyphus")) {
-    const sisyphusOverride = agentOverrides["Sisyphus"]
-    const sisyphusModel = sisyphusOverride?.model ?? systemDefaultModel
+  if (!disabledAgents.includes("Kraken")) {
+    const krakenOverride = agentOverrides["Kraken"]
+    const krakenModel = krakenOverride?.model ?? systemDefaultModel
 
-    let sisyphusConfig = createSisyphusAgent(sisyphusModel, availableAgents)
+    let krakenConfig = createKrakenConfig(krakenModel, availableAgents)
 
-    if (directory && sisyphusConfig.prompt) {
+    if (directory && krakenConfig.prompt) {
       const envContext = createEnvContext()
-      sisyphusConfig = { ...sisyphusConfig, prompt: sisyphusConfig.prompt + envContext }
+      krakenConfig = { ...krakenConfig, prompt: krakenConfig.prompt + envContext }
     }
 
-    if (sisyphusOverride) {
-      sisyphusConfig = mergeAgentConfig(sisyphusConfig, sisyphusOverride)
+    if (krakenOverride) {
+      krakenConfig = mergeAgentConfig(krakenConfig, krakenOverride)
     }
 
-    result["Sisyphus"] = sisyphusConfig
+    result["Kraken"] = krakenConfig
   }
 
-  if (!disabledAgents.includes("orchestrator-sisyphus")) {
-    const orchestratorOverride = agentOverrides["orchestrator-sisyphus"]
+  if (!disabledAgents.includes("orchestrator-kraken")) {
+    const orchestratorOverride = agentOverrides["orchestrator-kraken"]
     const orchestratorModel = orchestratorOverride?.model
-    let orchestratorConfig = createOrchestratorSisyphusAgent({
-      model: orchestratorModel,
-      availableAgents,
-    })
+    let orchestratorConfig = createKrakenConfig(orchestratorModel, availableAgents)
 
     if (orchestratorOverride) {
       orchestratorConfig = mergeAgentConfig(orchestratorConfig, orchestratorOverride)
     }
 
-    result["orchestrator-sisyphus"] = orchestratorConfig
+    result["orchestrator-kraken"] = orchestratorConfig
   }
 
   return result
