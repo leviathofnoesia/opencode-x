@@ -138,6 +138,28 @@ npx tsc --noEmit
 
 MIT License - all code is GPL-free with permissive dependencies.
 
+## Special Thanks
+
+OpenCode-X stands on the shoulders of many open-source projects and research:
+
+- **[oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)** - The foundation we built upon. Their agent architecture and tooling provided the starting point for our exploration.
+
+- **[LLM-TLDR Research](https://arxiv.org/abs/2407.12855)** - The compression methodology that inspired our token recycling approach. We reimplemented the core ideas in pure Python.
+
+- **[Robert C. Martin (Uncle Bob)](https://8thlight.com/blog/authors/robert-c-martin/)** - SOLID principles that inform our code quality standards and Scylla's QA framework.
+
+- **[W. Edwards Deming](https://en.wikipedia.org/wiki/W._Edwards_Deming)** - The PDSA (Plan-Do-Study-Act) cycle that powers Kraken's orchestration methodology.
+
+- **[Aho-Corasick Algorithm](https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_string_matching_algorithm)** - The string matching algorithm by Alfred Aho and Margaret Corasick that enables our ReDoS prevention.
+
+- **[Anthropic](https://www.anthropic.com/)** - Claude's thinking capabilities that made sophisticated agent frameworks possible.
+
+- **[OpenAI](https://openai.com/)** - GPT models and the broader LLM research that enables AI-assisted coding.
+
+- **[Google](https://developers.google.com/ml)** - Gemini models and tools that power some of our agents.
+
+All algorithms are reimplemented in clean, MIT-licensed code with appropriate attribution.
+
 ## Contributing
 
 1. Fork the repository
