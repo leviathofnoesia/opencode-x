@@ -1,96 +1,114 @@
-# AGENTS KNOWLEDGE BASE
+# AGENTS KNOWLEDGE BASE - OpenCode-X
 
 ## OVERVIEW
 
-AI agent definitions for multi-model orchestration. 7 specialized agents: Sisyphus (orchestrator), oracle (read-only consultation), librarian (research), explore (grep), frontend-ui-ux-engineer, document-writer, multimodal-looker.
+Sea-themed AI agent system for multi-model orchestration. 9 specialized agents named after sea creatures.
 
 ## STRUCTURE
 
 ```
 agents/
-├── orchestrator-sisyphus.ts # Orchestrator agent (1484 lines) - complex delegation
-├── sisyphus.ts              # Main Sisyphus prompt (641 lines)
-├── sisyphus-junior.ts       # Junior variant for delegated tasks
-├── oracle.ts                # Strategic advisor (GPT-5.2)
-├── librarian.ts             # Multi-repo research (Claude Sonnet 4.5)
-├── explore.ts               # Fast codebase grep (Grok Code)
-├── frontend-ui-ux-engineer.ts  # UI generation (Gemini 3 Pro)
-├── document-writer.ts       # Technical docs (Gemini 3 Pro)
-├── multimodal-looker.ts     # PDF/image analysis (Gemini 3 Flash)
-├── prometheus-prompt.ts     # Planning agent prompt (982 lines)
-├── metis.ts                 # Plan Consultant agent (404 lines)
-├── momus.ts                 # Plan Reviewer agent (404 lines)
-├── build-prompt.ts          # Shared build agent prompt
-├── plan-prompt.ts           # Shared plan agent prompt
-├── types.ts                 # AgentModelConfig interface
-├── utils.ts                 # createBuiltinAgents(), getAgentName()
-└── index.ts                 # builtinAgents export
+├── sea-themed/           # Sea-themed agent implementations
+│   ├── kraken.ts         # Primary orchestrator (main coding agent)
+│   ├── maelstrom.ts      # Read-only consultation (high-IQ reasoning)
+│   ├── abyssal.ts        # External docs & library research
+│   ├── nautilus.ts       # Codebase search & exploration
+│   ├── coral.ts          # Frontend UI/UX specialist
+│   ├── siren.ts          # Documentation writer
+│   ├── leviathan.ts      # System architect
+│   ├── poseidon.ts       # Pre-planning consultant
+│   ├── scylla.ts         # Plan reviewer
+│   └── index.ts          # Barrel export
+├── sisyphus.ts           # Legacy Sisyphus prompt (still available)
+├── sisyphus-prompt-builder.ts  # Dynamic prompt sections
+├── types.ts              # BuiltinAgentName, AgentPromptMetadata
+├── utils.ts              # createBuiltinAgents() factory
+└── index.ts              # builtinAgents export
 ```
 
-## AGENT MODELS
+## SEA-THEMED AGENTS
 
-| Agent | Default Model | Fallback | Purpose |
-|-------|---------------|----------|---------|
-| Sisyphus | anthropic/claude-opus-4-5 | - | Primary orchestrator with extended thinking |
-| oracle | openai/gpt-5.2 | - | Read-only consultation. High-IQ debugging, architecture |
-| librarian | opencode/glm-4.7-free | - | Docs, OSS research, GitHub examples |
-| explore | opencode/grok-code | google/gemini-3-flash, anthropic/claude-haiku-4-5 | Fast contextual grep |
-| frontend-ui-ux-engineer | google/gemini-3-pro-preview | - | UI/UX code generation |
-| document-writer | google/gemini-3-pro-preview | - | Technical writing |
-| multimodal-looker | google/gemini-3-flash | - | PDF/image analysis |
+| Agent | Default Model | Purpose |
+|-------|---------------|---------|
+| **Kraken** | anthropic/claude-opus-4-5 | Primary orchestrator, writes production code |
+| **Maelstrom** | openai/gpt-5.2 | Read-only consultation, high-IQ debugging, architecture |
+| **Abyssal** | opencode/glm-4-7-free | External docs, OSS research, GitHub examples |
+| **Nautilus** | opencode/grok-code | Fast contextual grep, codebase exploration |
+| **Coral** | google/gemini-3-pro | UI/UX code generation |
+| **Siren** | google/gemini-3-flash | Technical documentation writer |
+| **Leviathan** | anthropic/claude-opus-4-5 | System architect, structural analysis |
+| **Poseidon** | anthropic/claude-opus-4-5 | Pre-planning consultant, scope analysis |
+| **Scylla** | openai/gpt-5.2 | Plan reviewer, quality assurance |
+
+## DELEGATION STRATEGY
+
+```
+Kraken (Primary)
+├── Visual/UI/UX → Coral
+├── External Research → Abyssal
+├── Codebase Search → Nautilus
+├── Documentation → Siren
+├── Complex Architecture → Maelstrom or Leviathan
+└── Planning → Poseidon → Planner → Scylla (review)
+```
 
 ## HOW TO ADD AN AGENT
 
-1. Create `src/agents/my-agent.ts`:
-   ```typescript
-   import type { AgentConfig } from "@opencode-ai/sdk"
-   
-   export const myAgent: AgentConfig = {
-     model: "provider/model-name",
-     temperature: 0.1,
-     system: "Agent system prompt...",
-     tools: { include: ["tool1", "tool2"] },  // or exclude: [...]
-   }
-   ```
-2. Add to `builtinAgents` in `src/agents/index.ts`
-3. Update `types.ts` if adding new config options
+1. Create `src/agents/sea-themed/my-agent.ts`:
+```typescript
+import type { AgentConfig } from "@opencode-ai/sdk"
 
-## AGENT CONFIG OPTIONS
+export function createMyAgentConfig(model: string = "provider/model"): AgentConfig {
+  return {
+    description: "Brief description",
+    mode: "subagent" as const,
+    model,
+    temperature: 0.1,
+    tools: { write: false, edit: false },
+    prompt: "System prompt...",
+  }
+}
 
-| Option | Type | Description |
-|--------|------|-------------|
-| model | string | Model identifier (provider/model-name) |
-| temperature | number | 0.0-1.0, most use 0.1 for consistency |
-| system | string | System prompt (can be multiline template literal) |
-| tools | object | `{ include: [...] }` or `{ exclude: [...] }` |
-| top_p | number | Optional nucleus sampling |
-| maxTokens | number | Optional max output tokens |
+export const myAgent = createMyAgentConfig()
+```
 
-## MODEL FALLBACK LOGIC
+2. Export from `src/agents/sea-themed/index.ts`
+3. Add to `agentSources` in `src/agents/utils.ts`
+4. Update `BuiltinAgentName` type in `src/agents/types.ts`
+5. Add metadata to `agentMetadata` for prompt builder sections
 
-`createBuiltinAgents()` in utils.ts handles model fallback:
+## AGENT METADATA
 
-1. Check user config override (`agents.{name}.model`)
-2. Check installer settings (claude max20, gemini antigravity)
-3. Use default model
+Agents can define metadata for dynamic prompt sections:
 
-**Fallback order for explore**:
-- If gemini antigravity enabled → `google/gemini-3-flash`
-- If claude max20 enabled → `anthropic/claude-haiku-4-5`
-- Default → `opencode/grok-code` (free)
+```typescript
+export const MY_AGENT_PROMPT_METADATA: AgentPromptMetadata = {
+  category: "advisor",
+  cost: "EXPENSIVE",
+  promptAlias: "MyAgent",
+  triggers: [
+    { domain: "Domain", trigger: "When to delegate" }
+  ],
+  useWhen: [
+    "When this applies",
+  ],
+  avoidWhen: [
+    "When not to use",
+  ],
+  keyTrigger: "Quick reference phrase",
+}
+```
 
-## ANTI-PATTERNS (AGENTS)
+## CATEGORIES
 
-- **High temperature**: Don't use >0.3 for code-related agents
-- **Broad tool access**: Prefer explicit `include` over unrestricted access
-- **Monolithic prompts**: Keep prompts focused; delegate to specialized agents
-- **Missing fallbacks**: Consider free/cheap fallbacks for rate-limited models
+| Category | Cost | Description |
+|----------|------|-------------|
+| advisor | EXPENSIVE | Consultation agents (Maelstrom, Leviathan) |
+| specialist | CHEAP | Focused task agents (Coral, Siren) |
+| exploration | FREE | Search/research agents (Nautilus, Abyssal) |
 
-## SHARED PROMPTS
+## LEGACY AGENTS (Still Available)
 
-- **build-prompt.ts**: Base prompt for build agents (OpenCode default + Sisyphus variants)
-- **plan-prompt.ts**: Base prompt for plan agents (legacy)
-- **prometheus-prompt.ts**: System prompt for Prometheus (Planner) agent
-- **metis.ts**: Metis (Plan Consultant) agent for pre-planning analysis
-
-Used by `src/index.ts` when creating Builder-Sisyphus and Prometheus (Planner) variants.
+The original Greek-themed agents are still available for backward compatibility:
+- Sisyphus, Oracle, Librarian, Explore, Frontend-UI-UX-Engineer, Document-Writer
+- Metis (Plan Consultant), Momus (Plan Reviewer)
