@@ -43,6 +43,8 @@ import {
   createBackgroundCancel,
 } from "./background-task"
 
+import { createGitTool } from "./git"
+
 import type { PluginInput, ToolDefinition } from "@opencode-ai/plugin"
 import type { BackgroundManager } from "../features/background-agent"
 
@@ -51,6 +53,7 @@ type OpencodeClient = PluginInput["client"]
 export { createCallOmoAgent } from "./call-omo-agent"
 export { createLookAt } from "./look-at"
 export { createSisyphusTask, type SisyphusTaskToolOptions, DEFAULT_CATEGORIES, CATEGORY_PROMPT_APPENDS } from "./sisyphus-task"
+export { createGitTool } from "./git"
 
 export function createBackgroundTools(manager: BackgroundManager, client: OpencodeClient): Record<string, ToolDefinition> {
   return {
@@ -79,4 +82,5 @@ export const builtinTools: Record<string, ToolDefinition> = {
   session_read,
   session_search,
   session_info,
+  ...createGitTool(),
 }
