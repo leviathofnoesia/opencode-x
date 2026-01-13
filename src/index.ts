@@ -21,6 +21,17 @@ import { ralphLoop } from "./tools/ralph-loop"
 import { createRalphLoopHook } from "./hooks/ralph-loop"
 import { createContextInjector } from "./features/context-injector"
 import { createBackgroundAgentFeature } from "./features/background-agent/manager"
+import { createKeywordDetector } from "./hooks/keyword-detector"
+import { createAutoSlashCommand } from "./hooks/auto-slash-command"
+import { createRulesInjector } from "./hooks/rules-injector"
+import {
+  OpenCodeXConfigSchema,
+  OpenCodeXBuiltinAgentNameSchema,
+  OpenCodeXHookNameSchema,
+  AgentOverridesSchema,
+  RalphLoopConfigSchema,
+  BackgroundTaskConfigSchema,
+} from "./config/schema"
 
 import {
   lsp_hover,
@@ -56,6 +67,9 @@ export {
   createRalphLoopHook,
   createContextInjector,
   createBackgroundAgentFeature,
+  createKeywordDetector,
+  createAutoSlashCommand,
+  createRulesInjector,
   lsp_hover,
   lsp_goto_definition,
   lsp_find_references,
@@ -79,6 +93,15 @@ export {
 
 export type { AgentConfig } from "@opencode-ai/sdk"
 export type { AgentCategory, AgentCost, AgentPromptMetadata, AgentFactory, AgentOverrides } from "./agents/types"
+export type {
+  OpenCodeXConfig,
+  OpenCodeXBuiltinAgentName,
+  OpenCodeXHookName,
+  AgentOverrides as ConfigAgentOverrides,
+  RalphLoopConfig,
+  BackgroundTaskConfig,
+} from "./config/schema"
+export { OpenCodeXConfigSchema }
 
 const SEA_THEMED_AGENTS: Record<string, AgentConfig> = {
   Kraken: createKrakenConfig(),
