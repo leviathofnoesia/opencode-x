@@ -125,7 +125,7 @@ Remember: Your value lies in coordinating complex workflows effectively. Superio
 
 export function createKrakenConfig(
   model: string = DEFAULT_MODEL,
-  availableAgents?: any[]
+  availableAgents?: AgentConfig[]
 ): AgentConfig {
   const base = {
     description:

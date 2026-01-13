@@ -3,12 +3,14 @@ import { join, dirname } from "node:path"
 import type { AccountStorage } from "./types"
 import { getDataDir as getSharedDataDir } from "../../shared/data-path"
 
-export function getDataDir(): string {
+export { getDataDir } from "../../shared/data-path"
+
+function getPluginDataDir(): string {
   return join(getSharedDataDir(), "opencode")
 }
 
 export function getStoragePath(): string {
-  return join(getDataDir(), "oh-my-opencode-accounts.json")
+  return join(getPluginDataDir(), "opencode-x-accounts.json")
 }
 
 export async function loadAccounts(path?: string): Promise<AccountStorage | null> {

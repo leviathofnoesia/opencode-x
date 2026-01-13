@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "defaultAgent": "Kraken",
+  "enhanced": {
+    "enabled": true,
+    "keywords": ["enhanced", "max", "full"],
+    "searchKeywords": ["", "locate", "look forsearch", "find", "discover"],
+    "analyzeKeywords": ["analyze", "analyse", "examine", "investigate", "review"],
+    "thinkKeywords": ["think", "reason", "reflect", "consider"]
+  },
+  "thinkMode": {
+    "model": "antigravity-claude-opus-4-5-thinking",
+    "thinkingBudget": 32768
+  },
+  "ralphLoop": {
+    "maxIterations": 10,
+    "autoStart": false
+  },
+  "agents": {
+    "Kraken": {
+      "model": "anthropic/claude-opus-4-5",
+      "enabled": true
+    },
+    "Maelstrom": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    },
+    "Nautilus": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    },
+    "Abyssal": {
+      "model": "openai/gpt-4o",
+      "enabled": true
+    },
+    "Coral": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    },
+    "Siren": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    },
+    "Leviathan": {
+      "model": "anthropic/claude-opus-4-5",
+      "enabled": true
+    },
+    "Poseidon (Plan Consultant)": {
+      "model": "anthropic/claude-opus-4-5",
+      "enabled": true
+    },
+    "Scylla (Plan Reviewer)": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    },
+    "Pearl": {
+      "model": "anthropic/claude-sonnet-4-5",
+      "enabled": true
+    }
+  },
+  "tools": {
+    "opencode-x-agent": {
+      "enabled": true
+    },
+    "opencode-x-compress": {
+      "enabled": true
+    }
+  },
+  "compression": {
+    "enabled": true,
+    "level": "partial"
+  }
+}
