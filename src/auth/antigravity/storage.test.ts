@@ -7,8 +7,8 @@ import type { AccountStorage } from "./types"
 import { getDataDir, getStoragePath, loadAccounts, saveAccounts } from "./storage"
 
 describe("storage", () => {
-  const testDir = join(tmpdir(), `oh-my-opencode-storage-test-${Date.now()}`)
-  const testStoragePath = join(testDir, "oh-my-opencode-accounts.json")
+  const testDir = join(tmpdir(), `opencode-x-storage-test-${Date.now()}`)
+  const testStoragePath = join(testDir, "opencode-x-accounts.json")
 
   const validStorage: AccountStorage = {
     version: 1,
@@ -50,9 +50,9 @@ describe("storage", () => {
       expect(result).toContain("opencode")
     })
 
-    it("returns XDG_DATA_HOME/opencode when XDG_DATA_HOME is set on non-Windows", () => {
+    it("returns XDG_CONFIG_HOME/opencode-x when XDG_CONFIG_HOME is set on non-Windows", () => {
       // #given
-      const originalXdg = process.env.XDG_DATA_HOME
+      const originalXdg = process.env.XDG_CONFIG_HOME
       const originalPlatform = process.platform
 
       if (originalPlatform === "win32") {
@@ -60,25 +60,25 @@ describe("storage", () => {
       }
 
       try {
-        process.env.XDG_DATA_HOME = "/custom/data"
+        process.env.XDG_CONFIG_HOME = "/custom/config"
 
         // #when
         const result = getDataDir()
 
         // #then
-        expect(result).toBe("/custom/data/opencode")
+        expect(result).toBe("/custom/config/opencode-x")
       } finally {
         if (originalXdg !== undefined) {
-          process.env.XDG_DATA_HOME = originalXdg
+          process.env.XDG_CONFIG_HOME = originalXdg
         } else {
-          delete process.env.XDG_DATA_HOME
+          delete process.env.XDG_CONFIG_HOME
         }
       }
     })
 
-    it("returns ~/.local/share/opencode when XDG_DATA_HOME is not set on non-Windows", () => {
+    it("returns ~/.config/opencode-x when XDG_CONFIG_HOME is not set on non-Windows", () => {
       // #given
-      const originalXdg = process.env.XDG_DATA_HOME
+      const originalXdg = process.env.XDG_CONFIG_HOME
       const originalPlatform = process.platform
 
       if (originalPlatform === "win32") {
@@ -86,25 +86,25 @@ describe("storage", () => {
       }
 
       try {
-        delete process.env.XDG_DATA_HOME
+        delete process.env.XDG_CONFIG_HOME
 
         // #when
         const result = getDataDir()
 
         // #then
-        expect(result).toBe(join(homedir(), ".local", "share", "opencode"))
+        expect(result).toBe(join(homedir(), ".config", "opencode-x"))
       } finally {
         if (originalXdg !== undefined) {
-          process.env.XDG_DATA_HOME = originalXdg
+          process.env.XDG_CONFIG_HOME = originalXdg
         } else {
-          delete process.env.XDG_DATA_HOME
+          delete process.env.XDG_CONFIG_HOME
         }
       }
     })
   })
 
   describe("getStoragePath", () => {
-    it("returns path ending with oh-my-opencode-accounts.json", () => {
+    it("returns path ending with opencode-x-accounts.json", () => {
       // #given
       // no setup needed
 
@@ -112,7 +112,7 @@ describe("storage", () => {
       const result = getStoragePath()
 
       // #then
-      expect(result.endsWith("oh-my-opencode-accounts.json")).toBe(true)
+      expect(result.endsWith("opencode-x-accounts.json")).toBe(true)
       expect(result).toContain("opencode")
     })
   })
@@ -218,7 +218,7 @@ describe("storage", () => {
 
     it("creates parent directories if they do not exist", async () => {
       // #given
-      const nestedPath = join(testDir, "nested", "deep", "oh-my-opencode-accounts.json")
+      const nestedPath = join(testDir, "nested", "deep", "opencode-x-accounts.json")
 
       // #when
       await saveAccounts(validStorage, nestedPath)
