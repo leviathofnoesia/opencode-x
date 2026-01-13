@@ -24,6 +24,21 @@ import { createBackgroundAgentFeature } from "./features/background-agent/manage
 import { createKeywordDetector } from "./hooks/keyword-detector"
 import { createAutoSlashCommand } from "./hooks/auto-slash-command"
 import { createRulesInjector } from "./hooks/rules-injector"
+import { createAgentUsageReminder } from "./hooks/agent-usage-reminder"
+import { createAnthropicContextWindowLimitRecovery } from "./hooks/anthropic-context-window-limit-recovery"
+import { createAutoUpdateChecker } from "./hooks/auto-update-checker"
+import { createClaudeCodeHooks } from "./hooks/claude-code-hooks"
+import { createCompactionContextInjector } from "./hooks/compaction-context-injector"
+import { createDirectoryAgentsInjector } from "./hooks/directory-agents-injector"
+import { createDirectoryReadmeInjector } from "./hooks/directory-readme-injector"
+import { createEditErrorRecovery } from "./hooks/edit-error-recovery"
+import { createEmptyMessageSanitizer } from "./hooks/empty-message-sanitizer"
+import { createInteractiveBashSession } from "./hooks/interactive-bash-session"
+import { createNonInteractiveEnv } from "./hooks/non-interactive-env"
+import { createPreemptiveCompaction } from "./hooks/preemptive-compaction"
+import { createSessionRecovery } from "./hooks/session-recovery"
+import { createThinkingBlockValidator } from "./hooks/thinking-block-validator"
+import { createCommentChecker } from "./hooks/comment-checker"
 import {
   OpenCodeXConfigSchema,
   OpenCodeXBuiltinAgentNameSchema,
@@ -70,6 +85,21 @@ export {
   createKeywordDetector,
   createAutoSlashCommand,
   createRulesInjector,
+  createAgentUsageReminder,
+  createAnthropicContextWindowLimitRecovery,
+  createAutoUpdateChecker,
+  createClaudeCodeHooks,
+  createCompactionContextInjector,
+  createDirectoryAgentsInjector,
+  createDirectoryReadmeInjector,
+  createEditErrorRecovery,
+  createEmptyMessageSanitizer,
+  createInteractiveBashSession,
+  createNonInteractiveEnv,
+  createPreemptiveCompaction,
+  createSessionRecovery,
+  createThinkingBlockValidator,
+  createCommentChecker,
   lsp_hover,
   lsp_goto_definition,
   lsp_find_references,
