@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",

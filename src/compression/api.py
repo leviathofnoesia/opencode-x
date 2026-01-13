@@ -6,12 +6,12 @@ REST API endpoints for prompt compression.
 import json
 from typing import Dict, Any, Optional
 from dataclasses import asdict
-from .ocx_compress import (
+from ocx_compress import (
     LLMTLDRCompressor,
     estimate_token_count,
     calculate_compression_ratio,
 )
-from .prompt_manifest import get_manifest, PromptManifest
+from prompt_manifest import get_manifest, PromptManifest
 
 
 class CompressionAPI:

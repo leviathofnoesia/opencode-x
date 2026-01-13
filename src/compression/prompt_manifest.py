@@ -8,7 +8,7 @@ import struct
 from typing import Dict, Optional
 from pathlib import Path
 import json
-from .ocx_compress import LLMTLDRCompressor, estimate_token_count
+from ocx_compress import LLMTLDRCompressor, estimate_token_count
 
 
 class PromptManifest:

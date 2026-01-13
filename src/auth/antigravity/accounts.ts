@@ -98,7 +98,7 @@ export class AccountManager {
   }
 
   getAccounts(): ManagedAccount[] {
-    return [...this.accounts]
+    return this.accounts.map((acc) => ({ ...acc }))
   }
 
   getCurrentOrNextForFamily(family: ModelFamily): ManagedAccount | null {

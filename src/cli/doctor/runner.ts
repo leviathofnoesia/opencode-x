@@ -24,10 +24,18 @@ export async function runCheck(check: CheckDefinition): Promise<CheckResult> {
     result.duration = Math.round(performance.now() - start)
     return result
   } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Unknown error"
+    const errorStack = err instanceof Error ? err.stack : undefined
+
+    console.error(`[doctor] Check "${check.name}" failed:`, errorMessage)
+    if (errorStack) {
+      console.error(`[doctor] Stack trace:\n${errorStack}`)
+    }
+
     return {
       name: check.name,
       status: "fail",
-      message: err instanceof Error ? err.message : "Unknown error",
+      message: errorMessage,
       duration: Math.round(performance.now() - start),
     }
   }
