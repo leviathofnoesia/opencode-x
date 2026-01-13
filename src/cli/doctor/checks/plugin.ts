@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs"
-import jsoncParser from "jsonc-parser"
+import * as jsoncParser from "jsonc-parser"
 import path from "node:path"
 import os from "node:os"
 import type { CheckResult, CheckDefinition, PluginInfo } from "../types"

@@ -25,7 +25,7 @@ class SafeJSONDecoder(json.JSONDecoder):
 def safe_loads(text: str) -> Any:
     """
     Safely parse JSON string.
-    Blocks NaN/Inf by disabling parse_float.
+    Blocks NaN/Inf by disabling parse_float and validating the result.
 
     Args:
         text: JSON string to parse
@@ -37,9 +37,18 @@ def safe_loads(text: str) -> Any:
         ValueError: If JSON contains NaN/Inf or is malformed
     """
     try:
-        return json.loads(text, cls=SafeJSONDecoder)
+        result = json.loads(text, cls=SafeJSONDecoder)
+        # Validate the parsed object to catch NaN/Inf
+        if not validate_json_object(result):
+            raise ValueError("JSON contains forbidden numeric values (NaN/Inf)")
+        return result
     except ValueError as e:
-        if "NaN" in str(e) or "Infinity" in str(e) or "-Infinity" in str(e):
+        if (
+            "NaN" in str(e)
+            or "Infinity" in str(e)
+            or "-Infinity" in str(e)
+            or "forbidden numeric values" in str(e)
+        ):
             raise ValueError("JSON contains forbidden numeric values (NaN/Inf)")
         raise
 
@@ -83,6 +92,7 @@ def validate_json_object(obj: Any) -> bool:
                 return False
             if not validate_json_object(value):
                 return False
+        return True
     elif isinstance(obj, list):
         return all(validate_json_object(item) for item in obj)
     elif isinstance(obj, (str, int, bool)) or obj is None:

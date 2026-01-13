@@ -18,6 +18,8 @@ import {
 } from "./agents/sea-themed"
 import { opencodeXCompress } from "./tools/compression"
 import { ralphLoop } from "./tools/ralph-loop"
+import { modelSwitcher } from "./tools/model-switcher"
+import { ensureCommands } from "./tools/model-switcher/command-generator"
 import { createRalphLoopHook } from "./hooks/ralph-loop"
 import { createContextInjector } from "./features/context-injector"
 import { createBackgroundAgentFeature } from "./features/background-agent/manager"
@@ -119,6 +121,7 @@ export {
   session_info,
   grep,
   glob,
+  modelSwitcher,
 }
 
 export type { AgentConfig } from "@opencode-ai/sdk"
@@ -168,10 +171,11 @@ export const builtinTools: Record<string, ToolDefinition> = {
   session_read,
   session_search,
   session_info,
+  "model-switcher": modelSwitcher,
 }
 
 export async function createOpenCodeXPlugin(input: PluginInput): Promise<Hooks> {
-  const { client, directory, project } = input
+  const { client, directory, project, worktree } = input
 
   const opencodeXAgent = tool({
     description: "Invoke OpenCode-X sea-themed agents (Kraken, Maelstrom, Abyssal, Nautilus, Coral, Siren, Leviathan, Poseidon, Scylla, Pearl)",
@@ -190,6 +194,8 @@ export async function createOpenCodeXPlugin(input: PluginInput): Promise<Hooks> 
     },
   })
 
+  await ensureCommands(worktree)
+
   const ralphLoopHook = createRalphLoopHook(input)
   const contextInjector = createContextInjector(input)
   const backgroundAgent = createBackgroundAgentFeature(input)
@@ -199,6 +205,7 @@ export async function createOpenCodeXPlugin(input: PluginInput): Promise<Hooks> 
       "opencode-x-agent": opencodeXAgent,
       "opencode-x-compress": opencodeXCompress,
       "ralph-loop": ralphLoop,
+      "model-switcher": modelSwitcher,
       ...builtinTools,
     },
     ...ralphLoopHook,

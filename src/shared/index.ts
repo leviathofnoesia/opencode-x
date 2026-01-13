@@ -1,4 +1,4 @@
-import jsoncParser from "jsonc-parser"
+import * as jsoncParser from "jsonc-parser"
 import path from "node:path"
 import os from "node:os"
 
