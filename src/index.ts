@@ -1,8 +1,6 @@
-import type { Plugin, PluginInput } from "@opencode-ai/plugin"
-import type { Hooks, ToolDefinition } from "@opencode-ai/plugin"
-import { tool } from "@opencode-ai/plugin"
-import { z } from "zod"
-import type { AgentConfig } from "@opencode-ai/sdk"
+import type { Plugin, PluginInput, Hooks, ToolDefinition } from "@opencode-ai/plugin";
+import { z } from "zod";
+import type { AgentConfig } from "@opencode-ai/sdk";
 
 import {
   createKrakenConfig,
@@ -19,7 +17,6 @@ import {
 import { opencodeXCompress } from "./tools/compression"
 import { ralphLoop } from "./tools/ralph-loop"
 import { modelSwitcher } from "./tools/model-switcher"
-import { ensureCommands } from "./tools/model-switcher/command-generator"
 import { createRalphLoopHook } from "./hooks/ralph-loop"
 import { createContextInjector } from "./features/context-injector"
 import { createBackgroundAgentFeature } from "./features/background-agent/manager"
@@ -41,14 +38,6 @@ import { createPreemptiveCompaction } from "./hooks/preemptive-compaction"
 import { createSessionRecovery } from "./hooks/session-recovery"
 import { createThinkingBlockValidator } from "./hooks/thinking-block-validator"
 import { createCommentChecker } from "./hooks/comment-checker"
-import {
-  OpenCodeXConfigSchema,
-  OpenCodeXBuiltinAgentNameSchema,
-  OpenCodeXHookNameSchema,
-  AgentOverridesSchema,
-  RalphLoopConfigSchema,
-  BackgroundTaskConfigSchema,
-} from "./config/schema"
 
 import {
   lsp_hover,
@@ -68,90 +57,24 @@ import { session_list, session_read, session_search, session_info } from "./tool
 import { grep } from "./tools/grep"
 import { glob } from "./tools/glob"
 
-export {
-  createKrakenConfig,
-  createMaelstromConfig,
-  createNautilusConfig,
-  createAbyssalConfig,
-  createCoralConfig,
-  createSirenConfig,
-  createLeviathanConfig,
-  createPoseidonConfig,
-  createScyllaConfig,
-  createPearlConfig,
-  opencodeXCompress,
-  ralphLoop,
-  createRalphLoopHook,
-  createContextInjector,
-  createBackgroundAgentFeature,
-  createKeywordDetector,
-  createAutoSlashCommand,
-  createRulesInjector,
-  createAgentUsageReminder,
-  createAnthropicContextWindowLimitRecovery,
-  createAutoUpdateChecker,
-  createClaudeCodeHooks,
-  createCompactionContextInjector,
-  createDirectoryAgentsInjector,
-  createDirectoryReadmeInjector,
-  createEditErrorRecovery,
-  createEmptyMessageSanitizer,
-  createInteractiveBashSession,
-  createNonInteractiveEnv,
-  createPreemptiveCompaction,
-  createSessionRecovery,
-  createThinkingBlockValidator,
-  createCommentChecker,
-  lsp_hover,
-  lsp_goto_definition,
-  lsp_find_references,
-  lsp_document_symbols,
-  lsp_workspace_symbols,
-  lsp_diagnostics,
-  lsp_servers,
-  lsp_prepare_rename,
-  lsp_rename,
-  lsp_code_actions,
-  lsp_code_action_resolve,
-  ast_grep_search,
-  ast_grep_replace,
-  session_list,
-  session_read,
-  session_search,
-  session_info,
-  grep,
-  glob,
-  modelSwitcher,
+import { OpenCodeXConfigSchema } from "./config/schema"
+
+function getSeaThemedAgents(): Record<string, AgentConfig> {
+  return {
+    Kraken: createKrakenConfig(),
+    Maelstrom: createMaelstromConfig(),
+    Nautilus: createNautilusConfig(),
+    Abyssal: createAbyssalConfig(),
+    Coral: createCoralConfig(),
+    Siren: createSirenConfig(),
+    Leviathan: createLeviathanConfig(),
+    "Poseidon (Plan Consultant)": createPoseidonConfig(),
+    "Scylla (Plan Reviewer)": createScyllaConfig(),
+    Pearl: createPearlConfig(),
+  };
 }
 
-export type { AgentConfig } from "@opencode-ai/sdk"
-export type { AgentCategory, AgentCost, AgentPromptMetadata, AgentFactory, AgentOverrides } from "./agents/types"
-export type {
-  OpenCodeXConfig,
-  OpenCodeXBuiltinAgentName,
-  OpenCodeXHookName,
-  AgentOverrides as ConfigAgentOverrides,
-  RalphLoopConfig,
-  BackgroundTaskConfig,
-} from "./config/schema"
-export { OpenCodeXConfigSchema }
-
-const SEA_THEMED_AGENTS: Record<string, AgentConfig> = {
-  Kraken: createKrakenConfig(),
-  Maelstrom: createMaelstromConfig(),
-  Nautilus: createNautilusConfig(),
-  Abyssal: createAbyssalConfig(),
-  Coral: createCoralConfig(),
-  Siren: createSirenConfig(),
-  Leviathan: createLeviathanConfig(),
-  "Poseidon (Plan Consultant)": createPoseidonConfig(),
-  "Scylla (Plan Reviewer)": createScyllaConfig(),
-  Pearl: createPearlConfig(),
-}
-
-export const builtinAgents = SEA_THEMED_AGENTS
-
-export const builtinTools: Record<string, ToolDefinition> = {
+const builtinTools: Record<string, ToolDefinition> = {
   lsp_hover,
   lsp_goto_definition,
   lsp_find_references,
@@ -172,47 +95,92 @@ export const builtinTools: Record<string, ToolDefinition> = {
   session_search,
   session_info,
   "model-switcher": modelSwitcher,
+  "opencode-x-compress": opencodeXCompress,
+  "ralph-loop": ralphLoop,
 }
 
-export async function createOpenCodeXPlugin(input: PluginInput): Promise<Hooks> {
-  const { client, directory, project, worktree } = input
-
-  const opencodeXAgent = tool({
-    description: "Invoke OpenCode-X sea-themed agents (Kraken, Maelstrom, Abyssal, Nautilus, Coral, Siren, Leviathan, Poseidon, Scylla, Pearl)",
-    args: {
-      agent: z.enum(Object.keys(SEA_THEMED_AGENTS) as [string, ...string[]]),
-      prompt: z.string(),
-      model: z.string().optional(),
-    },
-    async execute(args, context) {
-      const { agent, prompt, model } = args
-      const agentConfig = SEA_THEMED_AGENTS[agent]
-      if (!agentConfig) {
-        return `Agent ${agent} not found`
+/**
+ * Merges multiple Hooks objects into one.
+ * Function hooks are called sequentially.
+ * Tool dictionaries are merged.
+ */
+function mergeHooks(...hooksList: Hooks[]): Hooks {
+  const merged: Hooks = {};
+  for (const hooks of hooksList) {
+    if (!hooks) continue;
+    for (const [key, value] of Object.entries(hooks)) {
+      if (!value) continue;
+      
+      if (typeof value === "function") {
+        const existing = merged[key as keyof Hooks];
+        if (typeof existing === "function") {
+          merged[key as keyof Hooks] = (async (input: any, output: any) => {
+            await (existing as any)(input, output);
+            await (value as any)(input, output);
+          }) as any;
+        } else {
+          merged[key as keyof Hooks] = value as any;
+        }
+      } else if (key === "tool") {
+        merged.tool = { ...merged.tool, ...value };
+      } else if (key === "auth") {
+        merged.auth = value as any;
       }
-      return `[OpenCode-X] Would invoke ${agent} with model ${model || agentConfig.model}`
-    },
-  })
-
-  await ensureCommands(worktree)
-
-  const ralphLoopHook = createRalphLoopHook(input)
-  const contextInjector = createContextInjector(input)
-  const backgroundAgent = createBackgroundAgentFeature(input)
-
-  return {
-    tool: {
-      "opencode-x-agent": opencodeXAgent,
-      "opencode-x-compress": opencodeXCompress,
-      "ralph-loop": ralphLoop,
-      "model-switcher": modelSwitcher,
-      ...builtinTools,
-    },
-    ...ralphLoopHook,
-    ...contextInjector,
+    }
   }
+  return merged;
 }
 
-export const OpenCodeXPlugin: Plugin = createOpenCodeXPlugin
+const createOpenCodeXPlugin: Plugin = async (input: PluginInput): Promise<Hooks> => {
+  console.error("OpenCode-X: createOpenCodeXPlugin called");
+  
+  const hooks: Hooks[] = [];
 
-export default OpenCodeXPlugin
+  // 1. Basic tools
+  hooks.push({ tool: builtinTools });
+
+  // 2. Configuration Hook
+  hooks.push({
+    config: async (config: any) => {
+      if (!config.agent) config.agent = {};
+      const agents = getSeaThemedAgents();
+      for (const [name, agentConfig] of Object.entries(agents)) {
+        if (!config.agent[name]) config.agent[name] = agentConfig;
+      }
+      if (!config.default_agent && config.agent["Kraken"]) config.default_agent = "Kraken";
+    }
+  });
+
+  // 3. Feature/Lifecycle Hooks
+  try {
+    hooks.push(createRalphLoopHook(input));
+    hooks.push(createContextInjector(input));
+    hooks.push(createKeywordDetector(input));
+    hooks.push(createAutoSlashCommand(input));
+    hooks.push(createRulesInjector(input));
+    hooks.push(createAgentUsageReminder(input));
+    hooks.push(createAnthropicContextWindowLimitRecovery(input));
+    hooks.push(createAutoUpdateChecker(input));
+    hooks.push(createClaudeCodeHooks(input));
+    hooks.push(createCompactionContextInjector(input));
+    hooks.push(createDirectoryAgentsInjector(input));
+    hooks.push(createDirectoryReadmeInjector(input));
+    hooks.push(createEditErrorRecovery(input));
+    hooks.push(createEmptyMessageSanitizer(input));
+    hooks.push(createInteractiveBashSession(input));
+    hooks.push(createNonInteractiveEnv(input));
+    hooks.push(createPreemptiveCompaction(input));
+    hooks.push(createSessionRecovery(input));
+    hooks.push(createThinkingBlockValidator(input));
+    hooks.push(createCommentChecker(input));
+    
+    const backgroundAgent = createBackgroundAgentFeature(input);
+    // Background agent is registered via the feature manager
+  } catch (e) {
+    console.error("OpenCode-X: Error initializing hooks", e);
+  }
+
+  return mergeHooks(...hooks);
+};
+
+export default createOpenCodeXPlugin;

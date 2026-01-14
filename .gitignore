@@ -75,3 +75,4 @@ sbom.cyclonedx.json
 # Configuration overrides (user-specific)
 .userconfig
 .claude/
+GEMINI.md
