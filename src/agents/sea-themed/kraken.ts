@@ -1,5 +1,20 @@
 import type { AgentConfig } from "@opencode-ai/sdk"
 import { isGptModel } from "../types"
+import type { AvailableAgent } from "../utils"
+import {
+  buildKeyTriggersSection,
+  buildToolSelectionTable,
+  buildDelegationTable,
+  buildExploreSection,
+  buildLibrarianSection,
+  buildFrontendSection,
+  buildOracleSection,
+  buildHardBlocksSection,
+  buildAntiPatternsSection,
+  buildAgentPrioritySection,
+  categorizeTools,
+  type AvailableSkill,
+} from "../kraken-prompt-builder"
 
 const DEFAULT_MODEL = "anthropic/claude-opus-4-5"
 
@@ -113,6 +128,48 @@ Structure all responses following this hierarchy:
 3. Validation Results: [Test outcomes]
 4. Known Issues: [Limitations or gaps]
 
+## Agent Delegation Mechanics
+
+When you need specialized expertise, mention the agent's capability in your planning or execution:
+
+### Pattern 1: Direct Mention (Preferred)
+Simply state your intent to use an agent as part of your plan:
+- "I'll use Nautilus to find all authentication patterns in the codebase"
+- "Let me search the codebase for existing implementations" (Nautilus implied)
+- "I need to research how this library handles authentication" (Abyssal implied)
+- "I should consult with Maelstrom about this architectural decision"
+
+### Pattern 2: Explicit Context Provision
+When delegating complex analysis, provide clear context:
+- "I need to understand the authentication flow. Let me search for all files that import 'auth' and examine their usage patterns."
+- "Before implementing, I should look up best practices for React Server Components in the official documentation."
+
+### Pattern 3: Sequential Delegation
+For dependent tasks, complete each step before proceeding:
+1. First: "Let me search for existing error handling patterns"
+2. Analyze results
+3. Then: "Based on these patterns, I'll implement consistent error handling"
+
+### Pattern 4: Parallel Operations
+For independent tasks, announce concurrent work:
+- "I'll simultaneously: (1) search for API route patterns, (2) check existing authentication middleware, and (3) examine the database schema"
+
+### Delegation Decision Matrix
+| Task Type | Handle Directly | Delegate To Specialist |
+|-----------|----------------|------------------------|
+| Simple file read | ✓ | |
+| Multi-angle codebase search | | Nautilus |
+| External library research | | Abyssal |
+| Visual/UI changes | | Coral |
+| Architectural decisions | | Maelstrom or Leviathan |
+| Documentation writing | | Siren |
+
+### Anti-Patterns to Avoid
+- Don't delegate what you can do with a single grep or file read
+- Don't delegate without providing sufficient context
+- Don't wait for analysis if you can continue other work
+- Don't delegate the same work to multiple agents
+
 ## Constraint Enforcement
 
 - **No implementation without planning**: Establish orchestration structure before coding
@@ -125,15 +182,55 @@ Remember: Your value lies in coordinating complex workflows effectively. Superio
 
 export function createKrakenConfig(
   model: string = DEFAULT_MODEL,
-  availableAgents?: AgentConfig[]
+  options?: {
+    availableAgents?: AvailableAgent[]
+    availableTools?: string[]
+    availableSkills?: AvailableSkill[]
+  }
 ): AgentConfig {
+  // Build dynamic prompt sections if agents/tools/skills are provided
+  let dynamicSections = ""
+
+  if (options?.availableAgents && options.availableAgents.length > 0) {
+    const { availableAgents, availableTools = [], availableSkills = [] } = options
+    const categorizedTools = categorizeTools(availableTools)
+
+    // Build dynamic resource awareness sections
+    const sections = [
+      "## Available Resources\n",
+      buildKeyTriggersSection(availableAgents, availableSkills),
+      "\n",
+      buildToolSelectionTable(availableAgents, categorizedTools, availableSkills),
+      "\n",
+      buildDelegationTable(availableAgents),
+      "\n",
+      buildExploreSection(availableAgents),
+      "\n",
+      buildLibrarianSection(availableAgents),
+      "\n",
+      buildFrontendSection(availableAgents),
+      "\n",
+      buildOracleSection(availableAgents),
+      "\n## Agent Reference\n\n",
+      buildAgentPrioritySection(availableAgents),
+      "\n",
+      buildHardBlocksSection(),
+      "\n",
+      buildAntiPatternsSection(),
+    ].filter(s => s && s.trim().length > 0)
+
+    dynamicSections = "\n\n" + sections.join("\n")
+  }
+
+  const finalPrompt = KRAKEN_SYSTEM_PROMPT + dynamicSections
+
   const base = {
     description:
       "Orchestration agent that coordinates development workflows through systematic planning, intelligent delegation, and continuous validation using PDSA cycles.",
     mode: "primary" as const,
     model,
     temperature: 0.1,
-    prompt: KRAKEN_SYSTEM_PROMPT,
+    prompt: finalPrompt,
   } as AgentConfig
 
   if (isGptModel(model)) {

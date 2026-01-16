@@ -122,7 +122,6 @@ const poseidonRestrictions = createAgentToolRestrictions([
   "write",
   "edit",
   "task",
-  "sisyphus_task",
 ])
 
 export function createPoseidonConfig(model: string = DEFAULT_MODEL): AgentConfig {

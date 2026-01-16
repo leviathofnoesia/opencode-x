@@ -171,7 +171,6 @@ export function createPearlConfig(model: string = DEFAULT_MODEL): AgentConfig {
     "write",
     "edit",
     "task",
-    "sisyphus_task",
   ])
 
   return {
