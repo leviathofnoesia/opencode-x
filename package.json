@@ -65,7 +65,6 @@
     "@ast-grep/napi": "^0.40.0",
     "@clack/core": "^0.5.0",
     "@clack/prompts": "^1.0.0-alpha.9",
-    "@code-yeongyu/comment-checker": "^0.6.1",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "@openauthjs/openauth": "^0.4.3",
     "@opencode-ai/plugin": "^1.1.1",
