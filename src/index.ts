@@ -14,6 +14,7 @@ import {
   createScyllaConfig,
   createPearlConfig,
 } from "./agents/sea-themed"
+import { getAvailableAgents } from "./agents/utils"
 import { opencodeXCompress } from "./tools/compression"
 import { ralphLoop } from "./tools/ralph-loop"
 import { modelSwitcher } from "./tools/model-switcher"
@@ -60,8 +61,21 @@ import { glob } from "./tools/glob"
 import { OpenCodeXConfigSchema } from "./config/schema"
 
 function getSeaThemedAgents(): Record<string, AgentConfig> {
+  // Get all available agents with metadata for Kraken's dynamic prompt
+  const availableAgents = getAvailableAgents()
+
+  // Get available tool names (excluding Kraken itself from agent delegation)
+  const availableTools = Object.keys(builtinTools)
+
+  // TODO: Get available skills from skill directory
+  const availableSkills: any[] = []
+
   return {
-    Kraken: createKrakenConfig(),
+    Kraken: createKrakenConfig(undefined, {
+      availableAgents: availableAgents.filter(a => a.name !== "Kraken"),
+      availableTools,
+      availableSkills,
+    }),
     Maelstrom: createMaelstromConfig(),
     Nautilus: createNautilusConfig(),
     Abyssal: createAbyssalConfig(),

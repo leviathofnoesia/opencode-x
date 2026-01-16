@@ -6,14 +6,14 @@
 
 ## OVERVIEW
 
-OpenCode plugin implementing Claude Code/AmpCode features. Multi-model agent orchestration (GPT-5.2, Claude, Gemini, Grok), LSP tools (11), AST-Grep search, MCP integrations (context7, websearch_exa, grep_app). "oh-my-zsh" for OpenCode.
+OpenCode plugin implementing Claude Code/AmpCode features. Multi-model agent orchestration (Claude, GPT, Gemini), LSP tools (11), AST-Grep search, MCP integrations (context7, websearch_exa, grep_app). Sea-themed agent harness for OpenCode.
 
 ## STRUCTURE
 
 ```
-oh-my-opencode/
+opencode-x/
 ├── src/
-│   ├── agents/        # AI agents (7): Sisyphus, oracle, librarian, explore, frontend, document-writer, multimodal-looker
+│   ├── agents/        # AI agents (10): Kraken, Maelstrom, Nautilus, Abyssal, Coral, Siren, Leviathan, Poseidon, Scylla, Pearl
 │   ├── hooks/         # 22 lifecycle hooks - see src/hooks/AGENTS.md
 │   ├── tools/         # LSP, AST-Grep, Grep, Glob, session mgmt - see src/tools/AGENTS.md
 │   ├── features/      # Claude Code compat layer - see src/features/AGENTS.md
@@ -50,7 +50,7 @@ oh-my-opencode/
 | Shared utilities | `src/shared/` | Cross-cutting utilities |
 | Slash commands | `src/hooks/auto-slash-command/` | Auto-detect and execute `/command` patterns |
 | Ralph Loop | `src/hooks/ralph-loop/` | Self-referential dev loop until completion |
-| Orchestrator | `src/hooks/sisyphus-orchestrator/` | Main orchestration hook (660 lines) |
+| Agent orchestration | `src/agents/sea-themed/kraken.ts` | Primary orchestrator with PDSA methodology |
 
 ## TDD (Test-Driven Development)
 
@@ -98,7 +98,7 @@ oh-my-opencode/
 - **Over-exploration**: Stop searching when sufficient context found
 - **High temperature**: Don't use >0.3 for code-related agents
 - **Broad tool access**: Prefer explicit `include` over unrestricted access
-- **Sequential agent calls**: Use `sisyphus_task` for parallel execution
+- **Sequential operations**: Consider parallel tool calls when tasks are independent
 - **Heavy PreToolUse logic**: Slows every tool call
 - **Self-planning for complex tasks**: Spawn planning agent (Prometheus) instead
 - **Trust agent self-reports**: ALWAYS verify results independently
@@ -122,13 +122,16 @@ oh-my-opencode/
 
 | Agent | Default Model | Purpose |
 |-------|---------------|---------|
-| Sisyphus | anthropic/claude-opus-4-5 | Primary orchestrator |
-| oracle | openai/gpt-5.2 | Read-only consultation. High-IQ debugging, architecture |
-| librarian | opencode/glm-4.7-free | Multi-repo analysis, docs |
-| explore | opencode/grok-code | Fast codebase exploration |
-| frontend-ui-ux-engineer | google/gemini-3-pro-preview | UI generation |
-| document-writer | google/gemini-3-pro-preview | Technical docs |
-| multimodal-looker | google/gemini-3-flash | PDF/image analysis |
+| Kraken | anthropic/claude-opus-4-5 | Primary orchestrator (PDSA cycles) |
+| Maelstrom | anthropic/claude-opus-4-5 | Read-only strategic advisor, architecture review |
+| Leviathan | anthropic/claude-opus-4-5 | System design, structural analysis |
+| Poseidon | anthropic/claude-opus-4-5 | Pre-planning consultant, constraint analysis |
+| Scylla | anthropic/claude-opus-4-5 | Plan reviewer, quality assurance |
+| Nautilus | anthropic/claude-opus-4-5 | Codebase search, pattern discovery |
+| Abyssal | anthropic/claude-opus-4-5 | External research, documentation retrieval |
+| Coral | anthropic/claude-opus-4-5 | Frontend UI/UX specialist |
+| Siren | anthropic/claude-opus-4-5 | Documentation writing |
+| Pearl | anthropic/claude-opus-4-5 | Multimedia analysis (PDFs, images) |
 
 ## COMMANDS
 
@@ -154,20 +157,18 @@ bun test               # Run tests (76 test files, 2559+ BDD assertions)
 
 - **ci.yml**: Parallel test/typecheck, build verification, auto-commit schema on master, rolling `next` draft release
 - **publish.yml**: Manual workflow_dispatch, version bump, changelog, OIDC npm publish
-- **sisyphus-agent.yml**: Agent-in-CI for automated issue handling via `@sisyphus-dev-ai` mentions
+- **kraken-agent.yml**: Agent-in-CI for automated issue handling via `@kraken-dev-ai` mentions
 
 ## COMPLEXITY HOTSPOTS
 
 | File | Lines | Description |
 |------|-------|-------------|
-| `src/agents/orchestrator-sisyphus.ts` | 1484 | Orchestrator agent, complex delegation |
 | `src/features/builtin-skills/skills.ts` | 1230 | Skill definitions (frontend-ui-ux, playwright) |
-| `src/agents/prometheus-prompt.ts` | 982 | Planning agent system prompt |
 | `src/auth/antigravity/fetch.ts` | 798 | Token refresh, URL rewriting |
 | `src/auth/antigravity/thinking.ts` | 755 | Thinking block extraction |
 | `src/cli/config-manager.ts` | 725 | JSONC parsing, env detection |
-| `src/hooks/sisyphus-orchestrator/index.ts` | 660 | Orchestrator hook impl |
-| `src/agents/sisyphus.ts` | 641 | Main Sisyphus prompt |
+| `src/agents/kraken-prompt-builder.ts` | 298 | Dynamic prompt construction for Kraken |
+| `src/agents/sea-themed/kraken.ts` | 228 | Primary orchestrator with PDSA cycles |
 | `src/tools/lsp/client.ts` | 612 | LSP protocol, JSON-RPC |
 | `src/features/background-agent/manager.ts` | 608 | Task lifecycle |
 | `src/auth/antigravity/response.ts` | 599 | Response transformation, streaming |
@@ -179,8 +180,8 @@ bun test               # Run tests (76 test files, 2559+ BDD assertions)
 - **Testing**: Bun native test (`bun test`), BDD-style `#given/#when/#then`, 76 test files
 - **OpenCode**: Requires >= 1.0.150
 - **Multi-lang docs**: README.md (EN), README.ko.md (KO), README.ja.md (JA), README.zh-cn.md (ZH-CN)
-- **Config**: `~/.config/opencode/oh-my-opencode.json` (user) or `.opencode/oh-my-opencode.json` (project)
-- **Trusted deps**: @ast-grep/cli, @ast-grep/napi, @code-yeongyu/comment-checker
+- **Config**: `~/.config/opencode/opencode-x.json` (user) or `.opencode/opencode-x.json` (project)
+- **Trusted deps**: @ast-grep/cli, @ast-grep/napi (comment-checker is built-in)
 - **JSONC support**: Config files support comments (`// comment`, `/* block */`) and trailing commas
 - **Claude Code Compat**: Full compatibility layer for settings.json hooks, commands, skills, agents, MCPs
 - **Skill MCP**: Skills can embed MCP server configs in YAML frontmatter

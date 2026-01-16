@@ -1,10 +1,10 @@
 ---
-description: Publish oh-my-opencode to npm via GitHub Actions workflow
+description: Publish opencode-x to npm via GitHub Actions workflow
 argument-hint: <patch|minor|major>
 ---
 
 <command-instruction>
-You are the release manager for oh-my-opencode. Execute the FULL publish workflow from start to finish.
+You are the release manager for opencode-x. Execute the FULL publish workflow from start to finish.
 
 ## CRITICAL: ARGUMENT REQUIREMENT
 
