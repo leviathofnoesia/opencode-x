@@ -9,7 +9,7 @@ Instead of delegating everything to a single AI agent, it's far more efficient t
 - **Category**: "What kind of work is this?" (determines model, temperature, prompt mindset)
 - **Skill**: "What tools and knowledge are needed?" (injects specialized knowledge, MCP tools, workflows)
 
-By combining these two concepts, you can generate optimal agents through `sisyphus_task`.
+By combining these two concepts, you can generate optimal agents through `agent delegation`.
 
 ---
 
@@ -30,18 +30,18 @@ A Category is an agent configuration preset optimized for specific domains.
 
 ### Usage
 
-Specify the `category` parameter when invoking the `sisyphus_task` tool.
+Specify the `category` parameter when invoking the `agent delegation` tool.
 
 ```typescript
-sisyphus_task(
+agent delegation(
   category="visual-engineering",
   prompt="Add a responsive chart component to the dashboard page"
 )
 ```
 
-### Sisyphus-Junior (Delegated Executor)
+### Delegated Agent (Delegated Executor)
 
-When you use a Category, a special agent called **Sisyphus-Junior** performs the work.
+When you use a Category, a special agent called **Delegated Agent** performs the work.
 - **Characteristic**: Cannot **re-delegate** tasks to other agents.
 - **Purpose**: Prevents infinite delegation loops and ensures focus on the assigned task.
 
@@ -72,7 +72,7 @@ A Skill is a mechanism that injects **specialized knowledge (Context)** and **to
 Add desired skill names to the `skills` array.
 
 ```typescript
-sisyphus_task(
+agent delegation(
   category="quick",
   skills=["git-master"],
   prompt="Commit current changes. Follow commit message style."
@@ -124,7 +124,7 @@ You can create powerful specialized agents by combining Categories and Skills.
 
 ---
 
-## 5. sisyphus_task Prompt Guide
+## 5. agent delegation Prompt Guide
 
 When delegating, **clear and specific** prompts are essential. Include these 7 elements:
 
